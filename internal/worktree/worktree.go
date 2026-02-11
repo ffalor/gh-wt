@@ -130,7 +130,8 @@ func (c *Creator) setupWorktree(info *WorktreeInfo) error {
 	// Clone bare repo if it doesn't exist
 	if _, err := os.Stat(c.repoPath); os.IsNotExist(err) {
 		fmt.Printf("Cloning %s/%s...\n", info.Owner, info.Repo)
-		if err := git.CloneBare(worktreeBase, info.CloneURL, BareDir); err != nil {
+		repoSpec := fmt.Sprintf("%s/%s", info.Owner, info.Repo)
+		if err := git.CloneBare(worktreeBase, repoSpec, BareDir); err != nil {
 			return fmt.Errorf("failed to clone repository: %w", err)
 		}
 		if err := git.ConfigRemote(c.repoPath); err != nil {

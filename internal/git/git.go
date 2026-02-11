@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
+
+	gh "github.com/cli/go-gh/v2"
 )
 
 // Command runs a git command in the specified directory
@@ -31,9 +34,15 @@ func CommandOutput(dir string, args ...string) (string, error) {
 	return string(out), err
 }
 
-// CloneBare clones a repository as a bare repository
-func CloneBare(dir, url, dest string) error {
-	return Command(dir, "clone", "--bare", url, dest)
+// CloneBare clones a repository as a bare repository using gh CLI
+func CloneBare(dir, repo, dest string) error {
+	dest = filepath.Join(dir, dest)
+	args := []string{"repo", "clone", repo, dest, "--", "--bare"}
+	_, stderr, err := gh.Exec(args...)
+	if err != nil {
+		return fmt.Errorf("failed to clone repository: %s", stderr.String())
+	}
+	return nil
 }
 
 // ConfigRemote sets the remote fetch spec to include all refs
