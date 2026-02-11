@@ -1,0 +1,28 @@
+version: '3'
+
+tasks:
+  install:
+    desc: Install the gh extension locally
+    cmds:
+      - gh extension install .
+
+  run:
+    desc: Run the installed extension
+    cmds:
+      - gh worktree{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
+
+  dev:
+    desc: Build and run the extension for development
+    deps: [build]
+    cmds:
+      - ./gh-worktree{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
+
+  build:
+    desc: Build the extension binary
+    cmds:
+      - go build -o gh-worktree
+
+  clean:
+    desc: Remove built binary
+    cmds:
+      - rm -f gh-worktree
