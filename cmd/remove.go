@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/charmbracelet/huh"
 	"github.com/ffalor/gh-worktree/internal/config"
@@ -14,7 +16,7 @@ import (
 
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
-	Use:   "remove [worktree-name]",
+	Use:   "remove [worktree-name|url]",
 	Short: "Remove a worktree",
 	Long:  `Remove a worktree and its associated branch. Will prompt if there are uncommitted changes (unless --force is used).`,
 	Args:  cobra.ExactArgs(1),
@@ -26,16 +28,40 @@ func init() {
 }
 
 func runRemove(cmd *cobra.Command, args []string) error {
-	worktreeName := args[0]
-	baseDir := config.GetWorktreeBase()
+	arg := args[0]
 
-	// Find the worktree across all repos
-	repoName, worktreePath, err := findWorktree(baseDir, worktreeName)
-	if err != nil {
-		return err
+	var worktreeName, repoName, worktreePath string
+	var err error
+
+	u, err := url.Parse(arg)
+	if err == nil && u.Scheme == "https" && strings.Contains(arg, "github.com") {
+		info, err := worktree.ParseArgument(arg)
+		if err != nil {
+			return err
+		}
+		repoName = info.Repo
+		worktreeName = info.WorktreeName
+		baseDir := config.GetWorktreeBase()
+		worktreePath = info.GetWorktreePath(baseDir)
+	} else {
+		baseDir := config.GetWorktreeBase()
+		repoName, worktreePath, err = findWorktree(baseDir, arg)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				fmt.Printf("Worktree '%s' not found, nothing to remove\n", arg)
+				return nil
+			}
+			return err
+		}
+		worktreeName = arg
 	}
 
-	repoPath := filepath.Join(baseDir, repoName, worktree.BareDir)
+	repoPath := filepath.Join(config.GetWorktreeBase(), repoName, worktree.BareDir)
+
+	if _, err := os.Stat(worktreePath); os.IsNotExist(err) {
+		fmt.Printf("Worktree '%s' not found, nothing to remove\n", worktreeName)
+		return nil
+	}
 
 	// Get branch name
 	branch, err := git.GetCurrentBranch(worktreePath)
