@@ -36,6 +36,11 @@ func CloneBare(dir, url, dest string) error {
 	return Command(dir, "clone", "--bare", url, dest)
 }
 
+// ConfigRemote sets the remote fetch spec to include all refs
+func ConfigRemote(repoPath string) error {
+	return Command(repoPath, "config", "--add", "remote.origin.fetch", "refs/heads/*:refs/remotes/origin/*")
+}
+
 // WorktreeAdd adds a worktree with a new branch
 func WorktreeAdd(repoPath, branch, worktreePath string) error {
 	return Command(repoPath, "worktree", "add", "-b", branch, worktreePath)

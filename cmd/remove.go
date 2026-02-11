@@ -28,21 +28,21 @@ func init() {
 func runRemove(cmd *cobra.Command, args []string) error {
 	worktreeName := args[0]
 	baseDir := config.GetWorktreeBase()
-	
+
 	// Find the worktree across all repos
 	repoName, worktreePath, err := findWorktree(baseDir, worktreeName)
 	if err != nil {
 		return err
 	}
-	
-	repoPath := filepath.Join(baseDir, repoName, ".base")
-	
+
+	repoPath := filepath.Join(baseDir, repoName, worktree.BareDir)
+
 	// Get branch name
 	branch, err := git.GetCurrentBranch(worktreePath)
 	if err != nil {
 		return fmt.Errorf("failed to get branch name: %w", err)
 	}
-	
+
 	// Check for uncommitted changes if not forced
 	if !forceFlag && git.HasUncommittedChanges(worktreePath) {
 		var confirm bool
@@ -62,12 +62,12 @@ func runRemove(cmd *cobra.Command, args []string) error {
 		// Force remove since user confirmed
 		forceFlag = true
 	}
-	
+
 	// Remove worktree
 	if err := worktree.Remove(repoPath, worktreePath, branch, forceFlag); err != nil {
 		return err
 	}
-	
+
 	fmt.Printf("Removed worktree: %s\n", worktreeName)
 	return nil
 }
@@ -77,17 +77,17 @@ func findWorktree(baseDir, name string) (repoName, worktreePath string, err erro
 	if err != nil {
 		return "", "", fmt.Errorf("worktree base directory not found: %w", err)
 	}
-	
+
 	for _, entry := range entries {
 		if !entry.IsDir() {
 			continue
 		}
-		
+
 		possiblePath := filepath.Join(baseDir, entry.Name(), name)
 		if _, err := os.Stat(possiblePath); err == nil {
 			return entry.Name(), possiblePath, nil
 		}
 	}
-	
+
 	return "", "", fmt.Errorf("worktree '%s' not found", name)
 }

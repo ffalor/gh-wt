@@ -18,6 +18,8 @@ const (
 	Issue WorktreeType = "issue"
 	PR    WorktreeType = "pr"
 	Local WorktreeType = "local"
+
+	BareDir = ".bare"
 )
 
 // WorktreeInfo holds information about a worktree to create
@@ -124,7 +126,7 @@ func (w *WorktreeInfo) GetWorktreePath(baseDir string) string {
 
 // GetRepoPath returns the path to the bare repository
 func (w *WorktreeInfo) GetRepoPath(baseDir string) string {
-	return filepath.Join(baseDir, w.Repo, ".base")
+	return filepath.Join(baseDir, w.Repo, BareDir)
 }
 
 // WorktreeListItem represents a single worktree in the list

@@ -120,7 +120,7 @@ func (c *Creator) fetchPRDetails(client *api.RESTClient, info *WorktreeInfo) err
 func (c *Creator) setupWorktree(info *WorktreeInfo) error {
 	worktreeBase := filepath.Join(c.baseDir, info.Repo)
 	worktreePath := filepath.Join(worktreeBase, info.WorktreeName)
-	c.repoPath = filepath.Join(worktreeBase, ".base")
+	c.repoPath = filepath.Join(worktreeBase, BareDir)
 
 	// Create worktree base directory
 	if err := os.MkdirAll(worktreeBase, 0755); err != nil {
@@ -130,8 +130,11 @@ func (c *Creator) setupWorktree(info *WorktreeInfo) error {
 	// Clone bare repo if it doesn't exist
 	if _, err := os.Stat(c.repoPath); os.IsNotExist(err) {
 		fmt.Printf("Cloning %s/%s...\n", info.Owner, info.Repo)
-		if err := git.CloneBare(worktreeBase, info.CloneURL, ".base"); err != nil {
+		if err := git.CloneBare(worktreeBase, info.CloneURL, BareDir); err != nil {
 			return fmt.Errorf("failed to clone repository: %w", err)
+		}
+		if err := git.ConfigRemote(c.repoPath); err != nil {
+			return fmt.Errorf("failed to configure remote: %w", err)
 		}
 	}
 
@@ -255,7 +258,7 @@ func List(repoPath string) ([]WorktreeListItem, error) {
 	var items []WorktreeListItem
 	for _, path := range worktreePaths {
 		// Skip the bare repo
-		if filepath.Base(path) == ".base" {
+		if filepath.Base(path) == BareDir {
 			continue
 		}
 

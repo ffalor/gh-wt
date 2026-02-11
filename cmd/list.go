@@ -80,21 +80,21 @@ func init() {
 
 func runList(cmd *cobra.Command, args []string) error {
 	baseDir := config.GetWorktreeBase()
-	
+
 	// Determine which repo to list
 	var repoPath string
 	if len(args) > 0 {
-		repoPath = filepath.Join(baseDir, args[0], ".base")
+		repoPath = filepath.Join(baseDir, args[0], worktree.BareDir)
 	} else {
 		// Try to find repos
 		entries, err := os.ReadDir(baseDir)
 		if err != nil {
 			return fmt.Errorf("no worktrees found in %s", baseDir)
 		}
-		
+
 		for _, entry := range entries {
 			if entry.IsDir() {
-				possiblePath := filepath.Join(baseDir, entry.Name(), ".base")
+				possiblePath := filepath.Join(baseDir, entry.Name(), worktree.BareDir)
 				if _, err := os.Stat(possiblePath); err == nil {
 					repoPath = possiblePath
 					break
@@ -131,9 +131,9 @@ func runList(cmd *cobra.Command, args []string) error {
 			if item.HasChanges {
 				status = "modified"
 			}
-			fmt.Printf("%-20s %-30s %-10s %s\n", 
-				item.Name, 
-				item.Branch, 
+			fmt.Printf("%-20s %-30s %-10s %s\n",
+				item.Name,
+				item.Branch,
 				status,
 				time.Unix(item.LastModTime, 0).Format("2006-01-02 15:04"))
 		}
@@ -142,12 +142,12 @@ func runList(cmd *cobra.Command, args []string) error {
 
 	// Interactive bubble tea UI
 	delegate := list.NewDefaultDelegate()
-	
+
 	// Customize styles based on worktree type and status
 	delegate.Styles.NormalTitle = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#FAFAFA")).
 		Padding(0, 0, 0, 2)
-	
+
 	delegate.Styles.NormalDesc = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#AFAFAF"))
 
