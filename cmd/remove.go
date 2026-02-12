@@ -31,11 +31,12 @@ func runRemove(cmd *cobra.Command, args []string) error {
 	arg := args[0]
 
 	var worktreeName, repoName, worktreePath string
+	var info *worktree.WorktreeInfo
 	var err error
 
 	u, err := url.Parse(arg)
 	if err == nil && u.Scheme == "https" && strings.Contains(arg, "github.com") {
-		info, err := worktree.ParseArgument(arg)
+		info, err = worktree.ParseArgument(arg)
 		if err != nil {
 			return err
 		}
@@ -54,9 +55,26 @@ func runRemove(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		worktreeName = arg
+
+		info = &worktree.WorktreeInfo{
+			Type:         worktree.Local,
+			Repo:         repoName,
+			WorktreeName: arg,
+		}
 	}
 
-	repoPath := filepath.Join(config.GetWorktreeBase(), repoName, worktree.BareDir)
+	baseDir := config.GetWorktreeBase()
+
+	var repoPath string
+	if info.Type == worktree.Local {
+		gitCommonDir, err := git.GetGitCommonDir(worktreePath)
+		if err != nil {
+			return fmt.Errorf("failed to get git directory: %w", err)
+		}
+		repoPath = filepath.Dir(gitCommonDir)
+	} else {
+		repoPath = info.GetRepoPath(baseDir)
+	}
 
 	if _, err := os.Stat(worktreePath); os.IsNotExist(err) {
 		fmt.Printf("Worktree '%s' not found, nothing to remove\n", worktreeName)

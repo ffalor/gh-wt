@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/ffalor/gh-worktree/internal/config"
 	"github.com/ffalor/gh-worktree/internal/git"
@@ -97,7 +98,7 @@ func (c *Creator) setupWorktree(info *WorktreeInfo) error {
 	// Check if git still has a record of this worktree (even though it doesn't exist on disk)
 	// and remove it if necessary
 	if git.WorktreeIsRegistered(c.repoPath, worktreePath) {
-		if err := git.WorktreeRemove(c.repoPath, worktreePath); err != nil {
+		if err := git.WorktreeRemove(c.repoPath, worktreePath, true); err != nil {
 			return fmt.Errorf("failed to remove stale worktree record: %w", err)
 		}
 	}
@@ -193,10 +194,31 @@ func Remove(repoPath, worktreePath, branch string, force bool) error {
 		return fmt.Errorf("worktree has uncommitted changes")
 	}
 
+	// Try to get the exact path from git's records
+	var exactPath string
+	worktrees, err := git.ListWorktrees(repoPath)
+	if err == nil {
+		for _, wt := range worktrees {
+			if strings.HasSuffix(wt, worktreePath) || wt == worktreePath {
+				exactPath = wt
+				break
+			}
+		}
+	}
+
 	// Remove worktree
-	if err := git.WorktreeRemove(repoPath, worktreePath); err != nil {
-		// Try manual removal if git worktree remove fails
-		_ = os.RemoveAll(worktreePath)
+	if exactPath != "" {
+		if err := git.WorktreeRemove(repoPath, exactPath, force); err != nil {
+			// If git worktree remove fails, try manual removal
+			if err := os.RemoveAll(worktreePath); err != nil {
+				return err
+			}
+		}
+	} else {
+		// Worktree not registered in git (or can't list), just remove from disk
+		if err := os.RemoveAll(worktreePath); err != nil {
+			return err
+		}
 	}
 
 	// Delete branch

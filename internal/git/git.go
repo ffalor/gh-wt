@@ -66,8 +66,12 @@ func WorktreeAddFromBranch(repoPath, branch, worktreePath string) error {
 }
 
 // WorktreeRemove removes a worktree
-func WorktreeRemove(repoPath, worktreePath string) error {
-	return Command(repoPath, "worktree", "remove", worktreePath)
+func WorktreeRemove(repoPath, worktreePath string, force bool) error {
+	args := []string{"worktree", "remove", worktreePath}
+	if force {
+		args = append(args, "--force")
+	}
+	return Command(repoPath, args...)
 }
 
 // Fetch fetches refs from origin
@@ -155,6 +159,14 @@ func IsGitRepository(path string) bool {
 // GetGitDir returns the path to the .git directory
 func GetGitDir(path string) (string, error) {
 	out, err := CommandOutput(path, "rev-parse", "--git-dir")
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(out), nil
+}
+
+func GetGitCommonDir(path string) (string, error) {
+	out, err := CommandOutput(path, "rev-parse", "--git-common-dir")
 	if err != nil {
 		return "", err
 	}

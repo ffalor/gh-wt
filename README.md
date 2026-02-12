@@ -1,7 +1,4 @@
-Next Steps
-- run 'cd gh-worktree; gh extension install .; gh worktree' to see your new extension in action
-- run 'go build && gh worktree' to see changes in your code as you develop
-- run 'gh repo create' to share your extension with others
+> [!CAUTION]
+> This is a WIP
 
-For more information on writing extensions:
-https://docs.github.com/github-cli/github-cli/creating-github-cli-extensions
+A CLI tool for managing git worktrees. Currently supports adding and removing worktrees. Future plans include the ability running commands in worktrees after creation. This can be used to do things like launch Claude Code.
