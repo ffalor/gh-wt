@@ -246,7 +246,9 @@ func createWorktree(info *worktree.WorktreeInfo) error {
 
 	defer func() {
 		if r := recover(); r != nil {
-			creator.Cleanup()
+			if cleanupErr := creator.Cleanup(); cleanupErr != nil {
+				fmt.Fprintln(os.Stderr, "Cleanup errors (resources may still exist):", cleanupErr)
+			}
 			panic(r)
 		}
 	}()
@@ -257,7 +259,9 @@ func createWorktree(info *worktree.WorktreeInfo) error {
 			fmt.Println("Cancelled - no changes were made")
 			return nil
 		}
-		creator.Cleanup()
+		if cleanupErr := creator.Cleanup(); cleanupErr != nil {
+			fmt.Fprintln(os.Stderr, "Cleanup errors (resources may still exist):", cleanupErr)
+		}
 		return err
 	}
 

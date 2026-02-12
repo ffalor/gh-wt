@@ -54,15 +54,26 @@ func (c *Creator) Create(info *WorktreeInfo) error {
 }
 
 // Cleanup removes all created resources (for rollback on error)
-func (c *Creator) Cleanup() {
+func (c *Creator) Cleanup() error {
+	var errs []error
+
 	// Remove created directories
 	for _, dir := range c.createdDirs {
-		_ = os.RemoveAll(dir)
+		if err := os.RemoveAll(dir); err != nil {
+			errs = append(errs, fmt.Errorf("failed to remove directory %s: %w", dir, err))
+		}
 	}
 	// Remove created branches
 	for _, branch := range c.createdBranches {
-		_ = git.BranchDelete(c.repoPath, branch, true)
+		if err := git.BranchDelete(c.repoPath, branch, true); err != nil {
+			errs = append(errs, fmt.Errorf("failed to delete branch %s: %w", branch, err))
+		}
 	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+	return nil
 }
 
 func (c *Creator) setupWorktree(info *WorktreeInfo) error {
