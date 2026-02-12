@@ -8,7 +8,7 @@ tasks:
 
   install:
     desc: Install the gh extension locally
-    deps: [remove]
+    deps: [remove, build]
     cmds:
       - gh extension install . --force
 
