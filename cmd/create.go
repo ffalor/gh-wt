@@ -73,7 +73,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 func handlePRFlag(value string) error {
 	currentRepo, err := repository.Current()
 	if err != nil {
-		return fmt.Errorf("not in a git repository with a GitHub remote: %w", err)
+		return err
 	}
 
 	args := []string{"pr", "view", value, "--json", "number,title,headRefName,url"}
@@ -111,7 +111,7 @@ func handlePRFlag(value string) error {
 func handleIssueFlag(value string) error {
 	currentRepo, err := repository.Current()
 	if err != nil {
-		return fmt.Errorf("not in a git repository with a GitHub remote: %w", err)
+		return err
 	}
 
 	args := []string{"issue", "view", value, "--json", "number,title,url"}
@@ -148,7 +148,7 @@ func handleIssueFlag(value string) error {
 func handleLocalArgument(name string) error {
 	currentRepo, err := repository.Current()
 	if err != nil {
-		return fmt.Errorf("not in a git repository with a GitHub remote: %w", err)
+		return err
 	}
 
 	info := &worktree.WorktreeInfo{
