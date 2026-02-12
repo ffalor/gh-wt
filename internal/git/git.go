@@ -151,3 +151,12 @@ func IsGitRepository(path string) bool {
 	err := cmd.Run()
 	return err == nil
 }
+
+// GetGitDir returns the path to the .git directory
+func GetGitDir(path string) (string, error) {
+	out, err := CommandOutput(path, "rev-parse", "--git-dir")
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(out), nil
+}

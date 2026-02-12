@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cli/go-gh/v2/pkg/repository"
+	"github.com/ffalor/gh-worktree/internal/git"
 )
 
 // DetermineWorktreeType determines the type of worktree based on the input
@@ -59,7 +59,7 @@ type WorktreeInfo struct {
 	Number       int
 	BranchName   string
 	WorktreeName string
-	CloneURL     string
+	RepoPath     string // Path to repo for local worktrees
 }
 
 // ParseArgument parses the command line argument
@@ -103,10 +103,9 @@ func parseGitHubURL(githubURL string) (*WorktreeInfo, error) {
 	}
 
 	info := &WorktreeInfo{
-		Owner:    owner,
-		Repo:     repo,
-		Number:   number,
-		CloneURL: fmt.Sprintf("https://github.com/%s/%s.git", owner, repo),
+		Owner:  owner,
+		Repo:   repo,
+		Number: number,
 	}
 
 	switch itemType {
@@ -125,20 +124,26 @@ func parseGitHubURL(githubURL string) (*WorktreeInfo, error) {
 
 // parseLocalName parses a local name argument
 func parseLocalName(name string) (*WorktreeInfo, error) {
-	repo, err := repository.Current()
+	gitDir, err := git.GetGitDir(".")
 	if err != nil {
-		return nil, fmt.Errorf("not in a git repository and no GitHub URL provided: %w", err)
+		return nil, fmt.Errorf("not in a git repository: %w", err)
 	}
 
+	absGitDir, err := filepath.Abs(gitDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get absolute path: %w", err)
+	}
+
+	repoPath := filepath.Dir(absGitDir)
+	repoName := filepath.Base(repoPath)
 	validBranchName := SanitizeBranchName(name)
 
 	return &WorktreeInfo{
 		Type:         Local,
-		Owner:        repo.Owner,
-		Repo:         repo.Name,
 		BranchName:   validBranchName,
 		WorktreeName: name,
-		CloneURL:     fmt.Sprintf("https://github.com/%s/%s.git", repo.Owner, repo.Name),
+		Repo:         repoName,
+		RepoPath:     repoPath,
 	}, nil
 }
 

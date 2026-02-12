@@ -67,22 +67,25 @@ func (c *Creator) Cleanup() {
 func (c *Creator) setupWorktree(info *WorktreeInfo) error {
 	worktreeBase := filepath.Join(c.baseDir, info.Repo)
 	worktreePath := filepath.Join(worktreeBase, info.WorktreeName)
-	c.repoPath = filepath.Join(worktreeBase, BareDir)
 
-	// Create worktree base directory
 	if err := os.MkdirAll(worktreeBase, 0755); err != nil {
 		return fmt.Errorf("failed to create worktree directory: %w", err)
 	}
 
-	// Clone bare repo if it doesn't exist
-	if _, err := os.Stat(c.repoPath); os.IsNotExist(err) {
-		fmt.Printf("Cloning %s/%s...\n", info.Owner, info.Repo)
-		repoSpec := fmt.Sprintf("%s/%s", info.Owner, info.Repo)
-		if err := git.CloneBare(worktreeBase, repoSpec, BareDir); err != nil {
-			return fmt.Errorf("failed to clone repository: %w", err)
-		}
-		if err := git.ConfigRemote(c.repoPath); err != nil {
-			return fmt.Errorf("failed to configure remote: %w", err)
+	if info.Type == Local {
+		c.repoPath = info.RepoPath
+	} else {
+		c.repoPath = filepath.Join(worktreeBase, BareDir)
+
+		if _, err := os.Stat(c.repoPath); os.IsNotExist(err) {
+			fmt.Printf("Cloning %s/%s...\n", info.Owner, info.Repo)
+			repoSpec := fmt.Sprintf("%s/%s", info.Owner, info.Repo)
+			if err := git.CloneBare(worktreeBase, repoSpec, BareDir); err != nil {
+				return fmt.Errorf("failed to clone repository: %w", err)
+			}
+			if err := git.ConfigRemote(c.repoPath); err != nil {
+				return fmt.Errorf("failed to configure remote: %w", err)
+			}
 		}
 	}
 

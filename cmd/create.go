@@ -107,7 +107,6 @@ func handlePRFlag(value string) error {
 		Number:       prInfo.Number,
 		BranchName:   prInfo.HeadRefName,
 		WorktreeName: fmt.Sprintf("pr_%d", prInfo.Number),
-		CloneURL:     fmt.Sprintf("https://github.com/%s/%s.git", owner, repo),
 	}
 
 	return createWorktree(info)
@@ -146,7 +145,6 @@ func handleIssueFlag(value string) error {
 		Number:       issueInfo.Number,
 		BranchName:   fmt.Sprintf("issue_%d", issueInfo.Number),
 		WorktreeName: fmt.Sprintf("issue_%d", issueInfo.Number),
-		CloneURL:     fmt.Sprintf("https://github.com/%s/%s.git", repo.Owner, repo.Name),
 	}
 
 	return createWorktree(info)
