@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	gh "github.com/cli/go-gh/v2"
@@ -146,15 +147,19 @@ func handleIssueFlag(value string) error {
 }
 
 func handleLocalArgument(name string) error {
-	currentRepo, err := repository.Current()
-	if err != nil {
-		return err
+	if !git.IsGitRepository(".") {
+		return fmt.Errorf("not a git repository")
 	}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get current directory: %w", err)
+	}
+	repoName := filepath.Base(cwd)
 
 	info := &worktree.WorktreeInfo{
 		Type:         worktree.Local,
-		Owner:        currentRepo.Owner,
-		Repo:         currentRepo.Name,
+		Repo:         repoName,
 		BranchName:   worktree.SanitizeBranchName(name),
 		WorktreeName: name,
 	}
