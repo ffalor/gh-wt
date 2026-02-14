@@ -11,6 +11,7 @@ import (
 	"text/template"
 
 	"github.com/ffalor/gh-worktree/internal/config"
+	"github.com/ffalor/gh-worktree/internal/logger"
 
 	"mvdan.cc/sh/v3/expand"
 	"mvdan.cc/sh/v3/interp"
@@ -38,7 +39,11 @@ type WorktreeInfo struct {
 }
 
 // Execute runs the specified action after templating its commands.
-func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string) error {
+func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string, log *logger.Logger) error {
+	if log == nil {
+		log = logger.NewLogger(false, true)
+	}
+
 	cfg, err := config.Get()
 	if err != nil {
 		return err
@@ -96,7 +101,7 @@ func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string
 		runDir = renderedDir.String()
 	}
 
-	fmt.Printf("\nRunning action '%s' in %s...\n", actionName, runDir)
+	log.Outf(logger.Cyan, "\nRunning action '%s' in %s...\n", actionName, runDir)
 	for _, cmdStr := range action.Cmds {
 		tmpl, err := template.New("cmd").Parse(cmdStr)
 		if err != nil {
@@ -109,7 +114,7 @@ func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string
 		}
 
 		finalCmd := renderedCmd.String()
-		fmt.Printf("$ %s\n", finalCmd)
+		log.Outf(logger.Default, "$ %s\n", finalCmd)
 
 		parser := syntax.NewParser()
 		prog, err := parser.Parse(strings.NewReader(finalCmd), "")
@@ -131,6 +136,6 @@ func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string
 		}
 	}
 
-	fmt.Println("Action finished successfully.")
+	log.Outf(logger.Green, "Action finished successfully.\n")
 	return nil
 }

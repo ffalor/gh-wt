@@ -1,18 +1,25 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
 	"github.com/ffalor/gh-worktree/internal/config"
+	"github.com/ffalor/gh-worktree/internal/logger"
 	"github.com/spf13/cobra"
 )
 
 var (
 	// Used for flags
 	forceFlag bool
+	verbose   bool
+	noColor   bool
 	cliArgs   string
 )
+
+// Log is the package-level logger instance.
+var Log = logger.NewLogger(false, true)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -39,7 +46,11 @@ Examples:
 	Args: cobra.ArbitraryArgs,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.Load()
-		return err
+		if err != nil {
+			return err
+		}
+		Log = logger.NewLogger(verbose, !noColor)
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// If arguments provided, treat as create command
@@ -96,6 +107,11 @@ func Execute() {
 
 	err := rootCmd.Execute()
 	if err != nil {
+		if Log != nil {
+			Log.Errorf("Error: %v\n", err)
+		} else {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		}
 		os.Exit(1)
 	}
 }
@@ -114,4 +130,6 @@ func isKnownCommand(arg string) bool {
 func init() {
 	// Global flags
 	rootCmd.PersistentFlags().BoolVarP(&forceFlag, "force", "f", false, "force operation without prompts")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVar(&noColor, "no-color", false, "disable color output")
 }

@@ -15,11 +15,10 @@ import (
 	"github.com/ffalor/gh-worktree/internal/action"
 	"github.com/ffalor/gh-worktree/internal/config"
 	"github.com/ffalor/gh-worktree/internal/git"
+	"github.com/ffalor/gh-worktree/internal/logger"
 	"github.com/ffalor/gh-worktree/internal/worktree"
 	"github.com/spf13/cobra"
 )
-
-
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
@@ -72,7 +71,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 // createFromPR handles creation from a PR URL or number.
 func createFromPR(value string) error {
-	fmt.Println("Fetching Pull Request info...")
+	Log.Infof("Fetching Pull Request info...\n")
 	args := []string{"pr", "view", value, "--json", "number,title,headRefName,url"}
 	stdout, stderr, err := gh.Exec(args...)
 	if err != nil {
@@ -103,11 +102,11 @@ func createFromPR(value string) error {
 		WorktreeName: fmt.Sprintf("pr_%d", prInfo.Number),
 	}
 
-	fmt.Printf("Creating worktree for PR #%d: %s\n", info.Number, prInfo.Title)
+	Log.Outf(logger.Green, "Creating worktree for PR #%d: %s\n", info.Number, prInfo.Title)
 
 	// Fetch the PR ref
 	prRef := fmt.Sprintf("refs/pull/%d/head", info.Number)
-	fmt.Printf("Fetching PR #%d...\n", info.Number)
+	Log.Infof("Fetching PR #%d...\n", info.Number)
 	if err := git.Fetch(prRef); err != nil {
 		return fmt.Errorf("failed to fetch PR: %w", err)
 	}
@@ -117,7 +116,7 @@ func createFromPR(value string) error {
 
 // createFromIssue handles creation from an Issue URL or number.
 func createFromIssue(value string) error {
-	fmt.Println("Fetching Issue info...")
+	Log.Infof("Fetching Issue info...\n")
 	args := []string{"issue", "view", value, "--json", "number,title,url"}
 	stdout, stderr, err := gh.Exec(args...)
 	if err != nil {
@@ -148,7 +147,7 @@ func createFromIssue(value string) error {
 		WorktreeName: branchName,
 	}
 
-	fmt.Printf("Creating worktree for Issue #%d: %s\n", info.Number, issueInfo.Title)
+	Log.Outf(logger.Green, "Creating worktree for Issue #%d: %s\n", info.Number, issueInfo.Title)
 	return createWorktree(info, "HEAD") // Issues start from HEAD
 }
 
@@ -290,7 +289,7 @@ func createWorktree(info *action.WorktreeInfo, startPoint string) error {
 				return fmt.Errorf("failed to read confirmation: %w", err)
 			}
 			if !overwrite {
-				fmt.Println("Cancelled - no changes made")
+				Log.Warnf("Cancelled - no changes made\n")
 				return nil
 			}
 		}
@@ -315,7 +314,7 @@ func createWorktree(info *action.WorktreeInfo, startPoint string) error {
 
 		// Delete branch if it exists
 		if branchExists {
-			fmt.Printf("Deleting existing branch '%s'...\n", info.BranchName)
+			Log.Infof("Deleting existing branch '%s'...\n", info.BranchName)
 			if err := git.BranchDelete(info.BranchName, true); err != nil {
 				return fmt.Errorf("failed to delete branch: %w", err)
 			}
@@ -335,9 +334,9 @@ func createWorktree(info *action.WorktreeInfo, startPoint string) error {
 	printSuccess(absPath)
 
 	if actionFlag != "" {
-		if err := action.Execute(actionFlag, absPath, info, cliArgs); err != nil {
+		if err := action.Execute(actionFlag, absPath, info, cliArgs, Log); err != nil {
 			// Don't fail the whole operation if the action fails, just print a warning
-			fmt.Fprintf(os.Stderr, "\n⚠️  Action '%s' failed: %v\n", actionFlag, err)
+			Log.Warnf("\n⚠️  Action '%s' failed: %v\n", actionFlag, err)
 		}
 	}
 
@@ -346,10 +345,10 @@ func createWorktree(info *action.WorktreeInfo, startPoint string) error {
 
 // printSuccess prints the final success message.
 func printSuccess(path string) {
-	fmt.Printf("\nWorktree created successfully!\n")
-	fmt.Printf("Location: %s\n", path)
-	fmt.Printf("\nTo switch to the worktree:\n")
-	fmt.Printf("  cd %s\n", path)
+	Log.Outf(logger.Green, "\nWorktree created successfully!\n")
+	Log.Outf(logger.Default, "Location: %s\n", path)
+	Log.Outf(logger.Default, "\nTo switch to the worktree:\n")
+	Log.Outf(logger.Cyan, "  cd %s\n", path)
 }
 
 // SanitizeBranchName is moved from types.go
@@ -387,11 +386,9 @@ func DetermineWorktreeType(input string) (action.WorktreeType, error) {
 	return action.Local, nil
 }
 
-
 var (
 	useExistingFlag bool
 	prFlag          string
 	issueFlag       string
 	actionFlag      string
 )
-

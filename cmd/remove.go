@@ -7,6 +7,7 @@ import (
 
 	"github.com/cli/go-gh/v2/pkg/prompter"
 	"github.com/ffalor/gh-worktree/internal/git"
+	"github.com/ffalor/gh-worktree/internal/logger"
 	"github.com/ffalor/gh-worktree/internal/worktree"
 	"github.com/spf13/cobra"
 )
@@ -47,7 +48,7 @@ func runRemove(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(matches) == 0 {
-		fmt.Printf("Worktree '%s' not found in this repository.\n", worktreeName)
+		Log.Warnf("Worktree '%s' not found in this repository.\n", worktreeName)
 		return nil
 	}
 
@@ -77,30 +78,30 @@ func runRemove(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("prompt failed: %w", err)
 		}
 		if !confirm {
-			fmt.Println("Operation cancelled.")
+			Log.Warnf("Cancelled - no changes made\n")
 			return nil
 		}
 		force = true // User confirmed.
 	}
 
 	// 1. Remove the worktree directory and git metadata.
-	fmt.Printf("Removing worktree '%s'...\n", targetWorktree.Path)
+	Log.Infof("Removing worktree '%s'...\n", targetWorktree.Path)
 	if err := worktree.Remove(targetWorktree.Path, force); err != nil {
 		return fmt.Errorf("failed to remove worktree: %w", err)
 	}
-	fmt.Printf("Successfully removed worktree directory.\n")
+	Log.Outf(logger.Green, "Successfully removed worktree directory.\n")
 
 	// 2. Delete the associated branch if we found one.
 	if targetWorktree.Branch != "" {
-		fmt.Printf("Deleting branch '%s'...\n", targetWorktree.Branch)
+		Log.Infof("Deleting branch '%s'...\n", targetWorktree.Branch)
 		if err := git.BranchDelete(targetWorktree.Branch, true); err != nil {
 			// This is not a fatal error, as the primary goal (removing the worktree) succeeded.
 			// The branch might be the main branch or have other worktrees, so git will prevent its deletion.
 			return fmt.Errorf("worktree removed, but failed to delete branch '%s': %w. You may need to remove it manually", targetWorktree.Branch, err)
 		}
-		fmt.Printf("Successfully deleted branch '%s'.\n", targetWorktree.Branch)
+		Log.Outf(logger.Green, "Successfully deleted branch '%s'.\n", targetWorktree.Branch)
 	}
 
-	fmt.Printf("\nWorktree '%s' and branch '%s' removed successfully.\n", targetWorktree.Path, targetWorktree.Branch)
+	Log.Outf(logger.Green, "\nWorktree '%s' and branch '%s' removed successfully.\n", targetWorktree.Path, targetWorktree.Branch)
 	return nil
 }
