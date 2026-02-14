@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -60,9 +61,9 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	switch worktreeType {
-	case action.PR:
+	case worktree.PR:
 		return createFromPR(arg)
-	case action.Issue:
+	case worktree.Issue:
 		return createFromIssue(arg)
 	default:
 		return createFromLocal(arg)
@@ -93,8 +94,8 @@ func createFromPR(value string) error {
 		return err
 	}
 
-	info := &action.WorktreeInfo{
-		Type:         action.PR,
+	info := &worktree.WorktreeInfo{
+		Type:         worktree.PR,
 		Owner:        repo.Owner,
 		Repo:         repo.Name,
 		Number:       prInfo.Number,
@@ -138,8 +139,8 @@ func createFromIssue(value string) error {
 	}
 
 	branchName := fmt.Sprintf("issue_%d", issueInfo.Number)
-	info := &action.WorktreeInfo{
-		Type:         action.Issue,
+	info := &worktree.WorktreeInfo{
+		Type:         worktree.Issue,
 		Owner:        repo.Owner,
 		Repo:         repo.Name,
 		Number:       issueInfo.Number,
@@ -165,8 +166,8 @@ func createFromLocal(name string) error {
 	// Sanitize the name for the branch
 	sanitizedBranchName := SanitizeBranchName(name)
 
-	info := &action.WorktreeInfo{
-		Type:         action.Local,
+	info := &worktree.WorktreeInfo{
+		Type:         worktree.Local,
 		Repo:         filepath.Base(cwd),
 		BranchName:   sanitizedBranchName,
 		WorktreeName: name, // Worktree directory keeps the original name
@@ -177,7 +178,7 @@ func createFromLocal(name string) error {
 
 // createWorktree is the central function that performs the creation.
 // It contains all the logic for path generation, user prompts, and calling the worktree package.
-func createWorktree(info *action.WorktreeInfo, startPoint string) error {
+func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
 	cfg, err := config.Get()
 	if err != nil {
 		return err
@@ -334,7 +335,17 @@ func createWorktree(info *action.WorktreeInfo, startPoint string) error {
 	printSuccess(absPath)
 
 	if actionFlag != "" {
-		if err := action.Execute(actionFlag, absPath, info, cliArgs, Log); err != nil {
+		if err := action.Execute(context.Background(), &action.ExecuteOptions{
+			ActionName:   actionFlag,
+			WorktreePath: absPath,
+			Info:         info,
+			CLIArgs:      cliArgs,
+			Logger:       Log,
+			Stdin:        os.Stdin,
+			Stdout:       os.Stdout,
+			Stderr:       os.Stderr,
+			Env:          os.Environ(),
+		}); err != nil {
 			// Don't fail the whole operation if the action fails, just print a warning
 			Log.Warnf("\n⚠️  Action '%s' failed: %v\n", actionFlag, err)
 		}
@@ -359,31 +370,31 @@ func SanitizeBranchName(name string) string {
 
 // DetermineWorktreeType determines the type of worktree based on the input
 // Returns the worktree type and an error message if invalid
-func DetermineWorktreeType(input string) (action.WorktreeType, error) {
+func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 	u, err := url.Parse(input)
 	if err != nil {
-		return action.Local, nil
+		return worktree.Local, nil
 	}
 
 	if u.Scheme == "" {
-		return action.Local, nil
+		return worktree.Local, nil
 	}
 
 	if u.Scheme != "http" && u.Scheme != "https" {
-		return action.Local, nil
+		return worktree.Local, nil
 	}
 
 	var prPattern = regexp.MustCompile(`^/[^/]+/[^/]+/pull/\d+(?:/.*)?$`)
 	if prPattern.MatchString(u.Path) {
-		return action.PR, nil
+		return worktree.PR, nil
 	}
 
 	var issuePattern = regexp.MustCompile(`^/[^/]+/[^/]+/issues/\d+(?:/.*)?$`)
 	if issuePattern.MatchString(u.Path) {
-		return action.Issue, nil
+		return worktree.Issue, nil
 	}
 
-	return action.Local, nil
+	return worktree.Local, nil
 }
 
 var (

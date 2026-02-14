@@ -3,7 +3,9 @@ package action
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"runtime"
@@ -11,37 +13,70 @@ import (
 	"text/template"
 
 	"github.com/ffalor/gh-worktree/internal/config"
+	"github.com/ffalor/gh-worktree/internal/execext"
 	"github.com/ffalor/gh-worktree/internal/logger"
-
-	"mvdan.cc/sh/v3/expand"
-	"mvdan.cc/sh/v3/interp"
-	"mvdan.cc/sh/v3/syntax"
+	"github.com/ffalor/gh-worktree/internal/worktree"
 )
 
-// WorktreeType represents the type of worktree
-type WorktreeType string
-
-const (
-	Issue WorktreeType = "issue"
-	PR    WorktreeType = "pr"
-	Local WorktreeType = "local"
+var (
+	// ErrNilOptions is returned when Execute receives nil options.
+	ErrNilOptions = errors.New("action: nil options given")
+	// ErrNilLogger is returned when ExecuteOptions.Logger is nil.
+	ErrNilLogger = errors.New("action: nil logger given")
 )
 
-// WorktreeInfo is a copy of the struct from cmd/create.go,
-// moved here for shared access.
-type WorktreeInfo struct {
-	Type         WorktreeType // Changed from string to WorktreeType
-	Owner        string
-	Repo         string
-	Number       int
-	BranchName   string
-	WorktreeName string
+// ExecuteOptions contains dependencies and context for running an action.
+type ExecuteOptions struct {
+	ActionName   string
+	WorktreePath string
+	Info         *worktree.WorktreeInfo
+	CLIArgs      string
+	Logger       *logger.Logger
+	Stdin        io.Reader
+	Stdout       io.Writer
+	Stderr       io.Writer
+	Env          []string
 }
 
 // Execute runs the specified action after templating its commands.
-func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string, log *logger.Logger) error {
-	if log == nil {
-		log = logger.NewLogger(false, true)
+func Execute(ctx context.Context, opts *ExecuteOptions) error {
+	if opts == nil {
+		return ErrNilOptions
+	}
+	if opts.Logger == nil {
+		return ErrNilLogger
+	}
+	if strings.TrimSpace(opts.ActionName) == "" {
+		return fmt.Errorf("action: action name is required")
+	}
+	if strings.TrimSpace(opts.WorktreePath) == "" {
+		return fmt.Errorf("action: worktree path is required")
+	}
+	if opts.Info == nil {
+		return fmt.Errorf("action: worktree info is required")
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	stdin := opts.Stdin
+	if stdin == nil {
+		stdin = os.Stdin
+	}
+
+	stdout := opts.Stdout
+	if stdout == nil {
+		stdout = os.Stdout
+	}
+
+	stderr := opts.Stderr
+	if stderr == nil {
+		stderr = os.Stderr
+	}
+
+	env := opts.Env
+	if len(env) == 0 {
+		env = os.Environ()
 	}
 
 	cfg, err := config.Get()
@@ -51,14 +86,14 @@ func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string
 
 	var action *config.Action
 	for i := range cfg.Actions {
-		if cfg.Actions[i].Name == actionName {
+		if cfg.Actions[i].Name == opts.ActionName {
 			action = &cfg.Actions[i]
 			break
 		}
 	}
 
 	if action == nil {
-		return fmt.Errorf("action '%s' not found in config", actionName)
+		return fmt.Errorf("action '%s' not found in config", opts.ActionName)
 	}
 
 	// Get git root directory
@@ -76,18 +111,18 @@ func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string
 		OS           string
 		ARCH         string
 		ROOT_DIR     string
-		*WorktreeInfo
+		*worktree.WorktreeInfo
 	}{
-		WorktreePath: worktreePath,
-		Action:       actionName,
-		CLI_ARGS:     cliArgs,
+		WorktreePath: opts.WorktreePath,
+		Action:       opts.ActionName,
+		CLI_ARGS:     opts.CLIArgs,
 		OS:           runtime.GOOS,
 		ARCH:         runtime.GOARCH,
 		ROOT_DIR:     rootDir,
-		WorktreeInfo: info,
+		WorktreeInfo: opts.Info,
 	}
 
-	runDir := worktreePath // Default to worktreePath
+	runDir := opts.WorktreePath
 
 	if action.Dir != "" {
 		tmpl, err := template.New("dir").Parse(action.Dir)
@@ -101,7 +136,8 @@ func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string
 		runDir = renderedDir.String()
 	}
 
-	log.Outf(logger.Cyan, "\nRunning action '%s' in %s...\n", actionName, runDir)
+	opts.Logger.Outf(logger.Magenta, "\nRunning action '%s' in %s...\n", opts.ActionName, runDir)
+
 	for _, cmdStr := range action.Cmds {
 		tmpl, err := template.New("cmd").Parse(cmdStr)
 		if err != nil {
@@ -114,28 +150,20 @@ func Execute(actionName, worktreePath string, info *WorktreeInfo, cliArgs string
 		}
 
 		finalCmd := renderedCmd.String()
-		log.Outf(logger.Default, "$ %s\n", finalCmd)
+		opts.Logger.Outf(logger.Magenta, "[%s]: %s\n", opts.ActionName, finalCmd)
 
-		parser := syntax.NewParser()
-		prog, err := parser.Parse(strings.NewReader(finalCmd), "")
-		if err != nil {
-			return fmt.Errorf("failed to parse shell command: %w", err)
-		}
-
-		runner, err := interp.New(
-			interp.StdIO(os.Stdin, os.Stdout, os.Stderr),
-			interp.Dir(runDir),
-			interp.Env(expand.ListEnviron(os.Environ()...)),
-		)
-		if err != nil {
-			return fmt.Errorf("failed to create shell interpreter: %w", err)
-		}
-
-		if err := runner.Run(context.Background(), prog); err != nil {
+		if err := execext.RunCommand(ctx, &execext.RunCommandOptions{
+			Command: finalCmd,
+			Dir:     runDir,
+			Env:     env,
+			Stdin:   stdin,
+			Stdout:  stdout,
+			Stderr:  stderr,
+		}); err != nil {
 			return fmt.Errorf("command '%s' failed: %w", finalCmd, err)
 		}
 	}
 
-	log.Outf(logger.Green, "Action finished successfully.\n")
+	opts.Logger.Outf(logger.Green, "Action finished successfully.\n")
 	return nil
 }
