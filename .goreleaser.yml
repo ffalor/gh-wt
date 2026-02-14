@@ -1,0 +1,95 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+gomod:
+  proxy: true
+  env:
+    - GOPROXY=https://proxy.golang.org,direct
+    - GOSUMDB=sum.golang.org
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - android
+      - freebsd
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - arm
+      - "386"
+    goarm:
+      - "7"
+    ldflags:
+      - -s -w
+      - -X github.com/ffalor/gh-wt/cmd.Version={{.Version}}
+      - -X github.com/ffalor/gh-wt/cmd.Commit={{.Commit}}
+      - -X github.com/ffalor/gh-wt/cmd.Date={{.CommitDate}}
+      - -X github.com/ffalor/gh-wt/cmd.BuiltBy=goreleaser
+    # Skipping builds for Android non-ARM64 architectures as they need CGO enabled
+    # https://goreleaser.com/limitations/cgo/
+    ignore:
+      - goos: android
+        goarch: amd64
+      - goos: android
+        goarch: arm
+      - goos: android
+        goarch: "386"
+      - goos: windows
+        goarch: arm
+
+archives:
+  - formats:
+      - binary
+    name_template: "gh-dash_{{ .Tag }}_{{ .Os }}-{{ .Arch }}{{if .Arm}}_{{.Arm}}{{end}}"
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+release:
+  header: |
+    # {{ .Version }}
+
+    <!-- what's new in this version? -->
+
+    To update run:
+    ```bash
+    gh extension upgrade wt
+    ```
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^test:"
+      - "^chore"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+      - go mod tidy
+  groups:
+    - title: Dependency updates
+      regexp: "^.*\\(deps\\)*:+.*$"
+      order: 300
+    - title: "New Features"
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 100
+    - title: "Bug fixes"
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 200
+    - title: "Documentation updates"
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 400
+    - title: Other work
+      order: 9999

@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
+	"runtime/debug"
 	"strings"
 
 	"github.com/ffalor/gh-wt/internal/config"
@@ -17,6 +19,37 @@ var (
 	noColor   bool
 	cliArgs   string
 )
+
+// Version is the current version of the CLI
+var Version = "dev"
+
+// Commit is the git commit hash
+var Commit = ""
+
+// Date is the build date
+var Date = ""
+
+// BuiltBy is the builder
+var BuiltBy = ""
+
+func buildVersion(version, commit, date, builtBy string) string {
+	result := version
+	if commit != "" {
+		result = fmt.Sprintf("%s\ncommit: %s", result, commit)
+	}
+	if date != "" {
+		result = fmt.Sprintf("%s\nbuilt at: %s", result, date)
+	}
+	if builtBy != "" {
+		result = fmt.Sprintf("%s\nbuilt by: %s", result, builtBy)
+	}
+	result = fmt.Sprintf("%s\ngoos: %s\ngoarch: %s", result, runtime.GOOS, runtime.GOARCH)
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Sum != "" {
+		result = fmt.Sprintf("%s\nmodule version: %s, checksum: %s", result, info.Main.Version, info.Main.Sum)
+	}
+
+	return result
+}
 
 // Log is the package-level logger instance.
 var Log = logger.NewLogger(false, true)
@@ -128,4 +161,11 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&forceFlag, "force", "f", false, "force operation without prompts")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(&noColor, "no-color", false, "disable color output")
+
+	// Version flag
+	rootCmd.Version = buildVersion(Version, Commit, Date, BuiltBy)
+	rootCmd.SetVersionTemplate(`gh-wt version {{.Version}}`)
+	rootCmd.Flags().BoolVarP(&showVersion, "version", "V", false, "version for gh-wt")
 }
+
+var showVersion bool

@@ -24,10 +24,18 @@ tasks:
     cmds:
       - ./gh-wt{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
 
+  version:
+    desc: Get current version from git tags
+    cmds:
+      - git describe --tags --dirty --always
+
   build:
     desc: Build the extension binary
+    vars:
+      VERSION:
+        sh: git describe --tags --dirty --always 2>/dev/null | sed 's/^v//' || echo "dev"
     cmds:
-      - go build -o gh-wt
+      - go build -ldflags "-X=github.com/ffalor/gh-wt/cmd.Version={{.VERSION}}" -o gh-wt
 
   clean:
     desc: Remove built binary
