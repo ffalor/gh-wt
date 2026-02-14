@@ -157,9 +157,10 @@ func createFromLocal(name string) error {
 		return fmt.Errorf("not in a git repository")
 	}
 
-	cwd, err := os.Getwd()
+	// Get repo name using the shared helper
+	repoName, err := git.GetRepoName()
 	if err != nil {
-		return fmt.Errorf("failed to get current directory: %w", err)
+		return err
 	}
 
 	// Sanitize the name for the branch
@@ -167,7 +168,7 @@ func createFromLocal(name string) error {
 
 	info := &worktree.WorktreeInfo{
 		Type:         worktree.Local,
-		Repo:         filepath.Base(cwd),
+		Repo:         repoName,
 		BranchName:   sanitizedBranchName,
 		WorktreeName: name, // Worktree directory keeps the original name
 	}

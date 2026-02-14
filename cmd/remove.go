@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/cli/go-gh/v2/pkg/prompter"
 	"github.com/ffalor/gh-wt/internal/git"
@@ -34,18 +33,10 @@ func runRm(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("not in a git repository")
 	}
 
-	// Find the worktree by name using git's worktree registry
-	worktrees, err := git.GetWorktreeInfo()
+	// Find the worktree by name using the shared helper
+	matches, err := worktree.FindByName(worktreeName)
 	if err != nil {
-		return fmt.Errorf("failed to list worktrees: %w", err)
-	}
-
-	// Find all worktrees matching the given input (suffix matching like git worktree remove)
-	var matches []git.WorktreeInfo
-	for _, wt := range worktrees {
-		if strings.HasSuffix(wt.Path, worktreeName) {
-			matches = append(matches, wt)
-		}
+		return err
 	}
 
 	if len(matches) == 0 {

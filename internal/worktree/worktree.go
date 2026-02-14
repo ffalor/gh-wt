@@ -86,3 +86,21 @@ func Exists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
 }
+
+// FindByName finds worktrees matching the given name using suffix matching.
+// Returns all matches, similar to how git worktree remove works.
+func FindByName(name string) ([]git.WorktreeInfo, error) {
+	worktrees, err := git.GetWorktreeInfo()
+	if err != nil {
+		return nil, fmt.Errorf("failed to list worktrees: %w", err)
+	}
+
+	var matches []git.WorktreeInfo
+	for _, wt := range worktrees {
+		if strings.HasSuffix(wt.Path, name) {
+			matches = append(matches, wt)
+		}
+	}
+
+	return matches, nil
+}

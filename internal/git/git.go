@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -153,4 +154,13 @@ func IsGitRepository(path string) bool {
 	cmd.Dir = path
 	err := cmd.Run()
 	return err == nil
+}
+
+// GetRepoName returns the repository name from the current working directory.
+func GetRepoName() (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current directory: %w", err)
+	}
+	return filepath.Base(cwd), nil
 }
