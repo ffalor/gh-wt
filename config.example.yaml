@@ -1,0 +1,22 @@
+worktree_dir: "~/github/worktree"
+
+actions:
+  - name: tmux
+    cmds:
+      - tmux new-session -d -s {{.BranchName}}
+      - tmux send-keys -t {{.BranchName}} "cd {{.WorktreePath}} && vim ." C-m
+      - tmux split-window -h -t {{.BranchName}}
+      - tmux send-keys -t {{.BranchName}}.1 "cd {{.WorktreePath}} && git status" C-m
+      - tmux attach -t {{.BranchName}}
+  - name: build
+    cmds:
+      - echo "Running action '{{.Action}}'..."
+      - task build {{.CLI_ARGS}}
+  - name: test
+    cmds:
+      - go test {{.CLI_ARGS}}
+  - name: internal
+    dir: "{{.WorktreePath}}/internal"
+    cmds:
+      - echo "Current directory: $(pwd)"
+      - ls -l

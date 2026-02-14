@@ -12,20 +12,14 @@ import (
 	gh "github.com/cli/go-gh/v2"
 	"github.com/cli/go-gh/v2/pkg/prompter"
 	"github.com/cli/go-gh/v2/pkg/repository"
+	"github.com/ffalor/gh-worktree/internal/action"
 	"github.com/ffalor/gh-worktree/internal/config"
 	"github.com/ffalor/gh-worktree/internal/git"
 	"github.com/ffalor/gh-worktree/internal/worktree"
 	"github.com/spf13/cobra"
 )
 
-// WorktreeType represents the type of worktree
-type WorktreeType string
 
-const (
-	Issue WorktreeType = "issue"
-	PR    WorktreeType = "pr"
-	Local WorktreeType = "local"
-)
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
@@ -39,27 +33,11 @@ var createCmd = &cobra.Command{
 	RunE: runCreate,
 }
 
-var (
-	useExistingFlag bool
-	prFlag          string
-	issueFlag       string
-)
-
-// WorktreeInfo is a new struct, moved from the worktree package.
-// It acts as a data container for the create command.
-type WorktreeInfo struct {
-	Type         WorktreeType
-	Owner        string
-	Repo         string
-	Number       int
-	BranchName   string
-	WorktreeName string
-}
-
 func init() {
 	createCmd.Flags().BoolVarP(&useExistingFlag, "use-existing", "e", false, "use existing branch if it exists")
 	createCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	createCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
+	createCmd.Flags().StringVar(&actionFlag, "action", "", "action to run after worktree creation")
 	rootCmd.AddCommand(createCmd)
 }
 
@@ -83,9 +61,9 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	switch worktreeType {
-	case PR:
+	case action.PR:
 		return createFromPR(arg)
-	case Issue:
+	case action.Issue:
 		return createFromIssue(arg)
 	default:
 		return createFromLocal(arg)
@@ -116,8 +94,8 @@ func createFromPR(value string) error {
 		return err
 	}
 
-	info := &WorktreeInfo{
-		Type:         PR,
+	info := &action.WorktreeInfo{
+		Type:         action.PR,
 		Owner:        repo.Owner,
 		Repo:         repo.Name,
 		Number:       prInfo.Number,
@@ -161,8 +139,8 @@ func createFromIssue(value string) error {
 	}
 
 	branchName := fmt.Sprintf("issue_%d", issueInfo.Number)
-	info := &WorktreeInfo{
-		Type:         Issue,
+	info := &action.WorktreeInfo{
+		Type:         action.Issue,
 		Owner:        repo.Owner,
 		Repo:         repo.Name,
 		Number:       issueInfo.Number,
@@ -188,8 +166,8 @@ func createFromLocal(name string) error {
 	// Sanitize the name for the branch
 	sanitizedBranchName := SanitizeBranchName(name)
 
-	info := &WorktreeInfo{
-		Type:         Local,
+	info := &action.WorktreeInfo{
+		Type:         action.Local,
 		Repo:         filepath.Base(cwd),
 		BranchName:   sanitizedBranchName,
 		WorktreeName: name, // Worktree directory keeps the original name
@@ -200,7 +178,7 @@ func createFromLocal(name string) error {
 
 // createWorktree is the central function that performs the creation.
 // It contains all the logic for path generation, user prompts, and calling the worktree package.
-func createWorktree(info *WorktreeInfo, startPoint string) error {
+func createWorktree(info *action.WorktreeInfo, startPoint string) error {
 	cfg, err := config.Get()
 	if err != nil {
 		return err
@@ -253,10 +231,15 @@ func createWorktree(info *WorktreeInfo, startPoint string) error {
 			message.WriteString(absPath)
 			message.WriteString("\n")
 		} else if worktreeDirExists {
-			// Invalid worktree (disk only)
-			message.WriteString("- Remove orphaned directory at ")
-			message.WriteString(absPath)
-			message.WriteString("\n")
+			// Disk only - just remove directory
+			if err := os.RemoveAll(worktreePath); err != nil {
+				return fmt.Errorf("failed to remove directory: %w", err)
+			}
+		} else if worktreeGitRegistered {
+			// Git only - prune the record
+			if err := git.WorktreePrune(); err != nil {
+				return fmt.Errorf("failed to prune worktree: %w", err)
+			}
 		}
 
 		// Add branch actions
@@ -350,6 +333,14 @@ func createWorktree(info *WorktreeInfo, startPoint string) error {
 	}
 
 	printSuccess(absPath)
+
+	if actionFlag != "" {
+		if err := action.Execute(actionFlag, absPath, info, cliArgs); err != nil {
+			// Don't fail the whole operation if the action fails, just print a warning
+			fmt.Fprintf(os.Stderr, "\n⚠️  Action '%s' failed: %v\n", actionFlag, err)
+		}
+	}
+
 	return nil
 }
 
@@ -369,29 +360,38 @@ func SanitizeBranchName(name string) string {
 
 // DetermineWorktreeType determines the type of worktree based on the input
 // Returns the worktree type and an error message if invalid
-func DetermineWorktreeType(input string) (WorktreeType, error) {
+func DetermineWorktreeType(input string) (action.WorktreeType, error) {
 	u, err := url.Parse(input)
 	if err != nil {
-		return Local, nil
+		return action.Local, nil
 	}
 
 	if u.Scheme == "" {
-		return Local, nil
+		return action.Local, nil
 	}
 
 	if u.Scheme != "http" && u.Scheme != "https" {
-		return Local, nil
+		return action.Local, nil
 	}
 
 	var prPattern = regexp.MustCompile(`^/[^/]+/[^/]+/pull/\d+(?:/.*)?$`)
 	if prPattern.MatchString(u.Path) {
-		return PR, nil
+		return action.PR, nil
 	}
 
 	var issuePattern = regexp.MustCompile(`^/[^/]+/[^/]+/issues/\d+(?:/.*)?$`)
 	if issuePattern.MatchString(u.Path) {
-		return Issue, nil
+		return action.Issue, nil
 	}
 
-	return Local, nil
+	return action.Local, nil
 }
+
+
+var (
+	useExistingFlag bool
+	prFlag          string
+	issueFlag       string
+	actionFlag      string
+)
+

@@ -11,6 +11,7 @@ import (
 var (
 	// Used for flags
 	forceFlag bool
+	cliArgs   string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -52,6 +53,20 @@ Examples:
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 func Execute() {
+	// Find and store arguments after --
+	dashDashIndex := -1
+	for i, arg := range os.Args {
+		if arg == "--" {
+			dashDashIndex = i
+			break
+		}
+	}
+
+	if dashDashIndex != -1 {
+		cliArgs = strings.Join(os.Args[dashDashIndex+1:], " ")
+		os.Args = os.Args[:dashDashIndex]
+	}
+
 	// Parse arguments to handle the case where a URL or branch name is passed
 	// without the 'create' subcommand
 	if len(os.Args) > 1 {

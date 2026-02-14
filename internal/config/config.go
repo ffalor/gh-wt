@@ -10,9 +10,17 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Action defines a named set of commands to run.
+type Action struct {
+	Name string   `mapstructure:"name"`
+	Cmds []string `mapstructure:"cmds"`
+	Dir  string   `mapstructure:"dir"`
+}
+
 // Config holds the application configuration
 type Config struct {
-	WorktreeBase string `mapstructure:"worktree_dir"`
+	WorktreeBase string   `mapstructure:"worktree_dir"`
+	Actions      []Action `mapstructure:"actions"`
 }
 
 // Default values
