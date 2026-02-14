@@ -1,6 +1,6 @@
 # AGENTS.md - Agentic Coding Guidelines
 
-`gh-worktree` is a GitHub CLI extension for managing git worktrees from GitHub PRs, Issues, and local branches. Built with Go 1.25.6 using cobra, viper, and go-gh.
+`gh-wt` is a GitHub CLI extension for managing git worktrees from GitHub PRs, Issues, and local branches. Built with Go 1.25.6 using cobra, viper, and go-gh.
 
 ## Build, Lint, and Test Commands
 
@@ -53,8 +53,8 @@ import (
     "os"
 
     "github.com/spf13/cobra"
-    "github.com/ffalor/gh-worktree/internal/config"
-    "github.com/ffalor/gh-worktree/internal/logger"
+    "github.com/ffalor/gh-wt/internal/config"
+    "github.com/ffalor/gh-wt/internal/logger"
 )
 ```
 
@@ -164,18 +164,18 @@ Example: `feat(worktree): add support for GitHub issues`
 
 ## Commands
 
-### Create (`gh worktree create`)
-- Create worktree from PR URL/number: `gh worktree https://github.com/owner/repo/pull/123`
-- Create worktree from Issue URL/number: `gh worktree https://github.com/owner/repo/issues/456`
-- Create local worktree: `gh worktree my-feature-branch`
+### Add (`gh wt add`)
+- Create worktree from PR URL/number: `gh wt https://github.com/owner/repo/pull/123`
+- Create worktree from Issue URL/number: `gh wt https://github.com/owner/repo/issues/456`
+- Create local worktree: `gh wt my-feature-branch`
 - Flags: `--pr`, `--issue`, `--action`, `--use-existing`
 
-### Remove (`gh worktree remove`)
-- Remove worktree by name: `gh worktree remove <worktree-name>`
+### Remove (`gh wt rm`)
+- Remove worktree by name: `gh wt rm <worktree-name>`
 - Flags: `--force` to skip confirmation
 
 ### Root
-- Can also invoke create directly: `gh worktree <url|name>`
+- Can also invoke add directly: `gh wt <url|name>`
 
 ## Configuration
 

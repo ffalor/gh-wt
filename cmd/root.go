@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ffalor/gh-worktree/internal/config"
-	"github.com/ffalor/gh-worktree/internal/logger"
+	"github.com/ffalor/gh-wt/internal/config"
+	"github.com/ffalor/gh-wt/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -23,23 +23,22 @@ var Log = logger.NewLogger(false, true)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gh-worktree [url|name]",
-	Short: "Create and manage git worktrees from GitHub PRs and Issues",
-	Long: `gh-worktree is a GitHub CLI extension that helps you create git worktrees
-from GitHub pull requests, issues, or local branch names.
+	Use:   "wt [url|name]",
+	Short: "Create and manage git worktrees",
+	Long: `gh wt is a GitHub CLI extension that helps you create git worktrees. A GitHub pull request or issue url can also be used.
 
 Examples:
   # Create worktree from PR URL
-  gh worktree https://github.com/owner/repo/pull/123 -action claude -- "/review"
+  gh wt https://github.com/owner/repo/pull/123 -action claude -- "/review"
 
   # Create worktree from Issue URL
-  gh worktree https://github.com/owner/repo/issues/456 -action claude -- "implement issue #456"
+  gh wt https://github.com/owner/repo/issues/456 -action claude -- "implement issue #456"
 
   # Create a worktree
-  gh worktree my-feature-branch
+  gh wt my-feature-branch
 
   # Remove a worktree
-  gh worktree remove pr_123`,
+  gh wt rm pr_123`,
 	Args: cobra.ArbitraryArgs,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.Load()
@@ -50,9 +49,9 @@ Examples:
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// If arguments provided, treat as create command
+		// If arguments provided, treat as add command
 		if len(args) > 0 {
-			return createCmd.RunE(cmd, args)
+			return addCmd.RunE(cmd, args)
 		}
 		// Show help if no args
 		return cmd.Help()
@@ -76,7 +75,7 @@ func Execute() {
 	}
 
 	// Parse arguments to handle the case where a URL or branch name is passed
-	// without the 'create' subcommand
+	// without the 'add' subcommand
 	if len(os.Args) > 1 {
 		// Find the first non-flag argument
 		firstNonFlagIdx := -1
@@ -89,13 +88,13 @@ func Execute() {
 
 		if firstNonFlagIdx > 0 {
 			firstNonFlag := os.Args[firstNonFlagIdx]
-			// If it doesn't look like a known subcommand, insert "create"
+			// If it doesn't look like a known subcommand, insert "add"
 			if !isKnownCommand(firstNonFlag) {
-				// Insert "create" before the first non-flag argument
+				// Insert "add" before the first non-flag argument
 				newArgs := make([]string, 0, len(os.Args)+1)
 				newArgs = append(newArgs, os.Args[0])
 				newArgs = append(newArgs, os.Args[1:firstNonFlagIdx]...) // flags
-				newArgs = append(newArgs, "create")
+				newArgs = append(newArgs, "add")
 				newArgs = append(newArgs, os.Args[firstNonFlagIdx:]...) // rest
 				os.Args = newArgs
 			}
@@ -115,7 +114,7 @@ func Execute() {
 
 // isKnownCommand checks if the argument is a known subcommand
 func isKnownCommand(arg string) bool {
-	knownCommands := []string{"create", "list", "remove", "help", "completion"}
+	knownCommands := []string{"add", "create", "rm", "remove", "help", "completion"}
 	for _, cmd := range knownCommands {
 		if arg == cmd {
 			return true

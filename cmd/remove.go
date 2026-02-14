@@ -6,26 +6,27 @@ import (
 	"strings"
 
 	"github.com/cli/go-gh/v2/pkg/prompter"
-	"github.com/ffalor/gh-worktree/internal/git"
-	"github.com/ffalor/gh-worktree/internal/logger"
-	"github.com/ffalor/gh-worktree/internal/worktree"
+	"github.com/ffalor/gh-wt/internal/git"
+	"github.com/ffalor/gh-wt/internal/logger"
+	"github.com/ffalor/gh-wt/internal/worktree"
 	"github.com/spf13/cobra"
 )
 
-// removeCmd represents the remove command
-var removeCmd = &cobra.Command{
-	Use:   "remove [worktree-name]",
-	Short: "Remove a worktree and its associated branch",
-	Long:  `Remove a worktree and its associated branch. Will prompt if there are uncommitted changes (unless --force is used).`,
-	Args:  cobra.ExactArgs(1),
-	RunE:  runRemove,
+// rmCmd represents the rm command
+var rmCmd = &cobra.Command{
+	Use:     "rm [worktree-name]",
+	Short:   "Remove a worktree and its associated branch",
+	Long:    `Remove a worktree and its associated branch. Will prompt if there are uncommitted changes (unless --force is used).`,
+	Aliases: []string{"remove"},
+	Args:    cobra.ExactArgs(1),
+	RunE:    runRm,
 }
 
 func init() {
-	rootCmd.AddCommand(removeCmd)
+	rootCmd.AddCommand(rmCmd)
 }
 
-func runRemove(cmd *cobra.Command, args []string) error {
+func runRm(cmd *cobra.Command, args []string) error {
 	worktreeName := args[0]
 
 	// Require being in a git repository (consistent with create command)

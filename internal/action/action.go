@@ -12,10 +12,10 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/ffalor/gh-worktree/internal/config"
-	"github.com/ffalor/gh-worktree/internal/execext"
-	"github.com/ffalor/gh-worktree/internal/logger"
-	"github.com/ffalor/gh-worktree/internal/worktree"
+	"github.com/ffalor/gh-wt/internal/config"
+	"github.com/ffalor/gh-wt/internal/execext"
+	"github.com/ffalor/gh-wt/internal/logger"
+	"github.com/ffalor/gh-wt/internal/worktree"
 )
 
 var (

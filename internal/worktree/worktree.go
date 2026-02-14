@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ffalor/gh-worktree/internal/git"
+	"github.com/ffalor/gh-wt/internal/git"
 )
 
 // Create creates a new worktree.

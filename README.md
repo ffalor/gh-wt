@@ -1,6 +1,6 @@
-# gh-worktree
+# gh-wt
 
-`gh-worktree` is a GitHub CLI extension for creating and cleaning up Git worktrees from pull requests, issues, or your current HEAD. It enhances your development workflow by enabling customizable post-create actions to automatically set up your environment, like launching tmux, interacting with AI tools, or running project bootstrap commands.
+`gh-wt` is a GitHub CLI extension for creating and cleaning up Git worktrees from pull requests, issues, or your current HEAD. It enhances your development workflow by enabling customizable post-create actions to automatically set up your environment, like launching tmux, interacting with AI tools, or running project bootstrap commands.
 
 ## Requirements
 
@@ -12,47 +12,47 @@
 Install from GitHub:
 
 ```bash
-gh extension install ffalor/gh-worktree
+gh extension install ffalor/gh-wt
 ```
 
 ## Quick Start
 
-Current `gh worktree --help` output:
+Current `gh wt --help` output:
 
 ```text
-gh-worktree is a GitHub CLI extension that helps you create git worktrees
-from GitHub pull requests, issues, or local branch names.
+gh wt is a GitHub CLI extension that helps you create git worktrees.
+A GitHub pull request or issue url can also be used.
 
 Examples:
   # Create worktree from PR URL
-  gh worktree https://github.com/owner/repo/pull/123 -action claude -- "/review"
+  gh wt https://github.com/owner/repo/pull/123 -action claude -- "/review"
 
   # Create worktree from Issue URL
-  gh worktree https://github.com/owner/repo/issues/456 -action claude -- "implement issue #456"
+  gh wt https://github.com/owner/repo/issues/456 -action claude -- "implement issue #456"
 
   # Create a worktree
-  gh worktree my-feature-branch
+  gh wt my-feature-branch
 
   # Remove a worktree
-  gh worktree remove pr_123
+  gh wt rm pr_123
 
 Usage:
-  gh-worktree [url|name] [flags]
-  gh-worktree [command]
+  wt [url|name] [flags]
+  wt [command]
 
 Available Commands:
+  add         Add a new worktree
   completion  Generate the autocompletion script for the specified shell
-  create      Create a new worktree from a GitHub URL or branch name
   help        Help about any command
-  remove      Remove a worktree and its associated branch
+  rm          Remove a worktree and its associated branch
 
 Flags:
   -f, --force      force operation without prompts
-  -h, --help       help for gh-worktree
+  -h, --help       help for wt
       --no-color   disable color output
   -v, --verbose    verbose output
 
-Use "gh-worktree [command] --help" for more information about a command.
+Use "wt [command] --help" for more information about a command.
 ```
 
 ## Configuration
@@ -112,13 +112,13 @@ actions:
 Run an action:
 
 ```bash
-gh worktree create 123 --action tmux
+gh wt add 123 --action tmux
 ```
 
 Pass extra args to actions after `--`:
 
 ```bash
-gh worktree create 123 --action claude -- "fix issue #456"
+gh wt add 123 --action claude -- "fix issue #456"
 ```
 
 ## Action Template Variables

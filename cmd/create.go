@@ -13,35 +13,33 @@ import (
 	gh "github.com/cli/go-gh/v2"
 	"github.com/cli/go-gh/v2/pkg/prompter"
 	"github.com/cli/go-gh/v2/pkg/repository"
-	"github.com/ffalor/gh-worktree/internal/action"
-	"github.com/ffalor/gh-worktree/internal/config"
-	"github.com/ffalor/gh-worktree/internal/git"
-	"github.com/ffalor/gh-worktree/internal/logger"
-	"github.com/ffalor/gh-worktree/internal/worktree"
+	"github.com/ffalor/gh-wt/internal/action"
+	"github.com/ffalor/gh-wt/internal/config"
+	"github.com/ffalor/gh-wt/internal/git"
+	"github.com/ffalor/gh-wt/internal/logger"
+	"github.com/ffalor/gh-wt/internal/worktree"
 	"github.com/spf13/cobra"
 )
 
-// createCmd represents the create command
-var createCmd = &cobra.Command{
-	Use:   "create [url|name]",
-	Short: "Create a new worktree from a GitHub URL or branch name",
-	Long: `Create a new git worktree from either:
-- A GitHub pull request URL or number
-- A GitHub issue URL or number
-- A local branch name (when run from within a git repository)`,
-	Args: cobra.RangeArgs(0, 1),
-	RunE: runCreate,
+// addCmd represents the add command
+var addCmd = &cobra.Command{
+	Use:     "add [url|name]",
+	Short:   "Add a new worktree",
+	Long:    `Add a new git worktree from either:\n- A GitHub pull request URL or number\n- A GitHub issue URL or number\n- A name to use for the new worktree and branch`,
+	Aliases: []string{"create"},
+	Args:    cobra.RangeArgs(0, 1),
+	RunE:    runAdd,
 }
 
 func init() {
-	createCmd.Flags().BoolVarP(&useExistingFlag, "use-existing", "e", false, "use existing branch if it exists")
-	createCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
-	createCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
-	createCmd.Flags().StringVar(&actionFlag, "action", "", "action to run after worktree creation")
-	rootCmd.AddCommand(createCmd)
+	addCmd.Flags().BoolVarP(&useExistingFlag, "use-existing", "e", false, "use existing branch if it exists")
+	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
+	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
+	addCmd.Flags().StringVar(&actionFlag, "action", "", "action to run after worktree creation")
+	rootCmd.AddCommand(addCmd)
 }
 
-func runCreate(cmd *cobra.Command, args []string) error {
+func runAdd(cmd *cobra.Command, args []string) error {
 	// Determine the type of input
 	if prFlag != "" {
 		return createFromPR(prFlag)

@@ -1,4 +1,4 @@
-module github.com/ffalor/gh-worktree
+module github.com/ffalor/gh-wt
 
 go 1.25.6
 
