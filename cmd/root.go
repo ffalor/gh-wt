@@ -114,7 +114,7 @@ func Execute() {
 
 // isKnownCommand checks if the argument is a known subcommand
 func isKnownCommand(arg string) bool {
-	knownCommands := []string{"add", "create", "rm", "remove", "help", "completion"}
+	knownCommands := []string{"add", "create", "rm", "remove", "action", "help", "completion"}
 	for _, cmd := range knownCommands {
 		if arg == cmd {
 			return true
