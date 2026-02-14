@@ -34,7 +34,7 @@ func runRemove(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		if os.IsNotExist(err) {
 			fmt.Printf("Worktree '%s' not found, nothing to remove.\n", worktreeName)
-			return nil // Not an error if it's already gone.
+			return nil
 		}
 		return err
 	}

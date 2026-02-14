@@ -43,20 +43,6 @@ func Create(path, branch, startPoint string) error {
 	return nil
 }
 
-// Attach creates a new worktree from an existing branch.
-func Attach(path, branch string) error {
-	// Ensure the base directory exists
-	baseDir := filepath.Dir(path)
-	if err := os.MkdirAll(baseDir, 0755); err != nil {
-		return fmt.Errorf("failed to create worktree directory: %w", err)
-	}
-
-	if err := git.WorktreeAddFromBranch(branch, path); err != nil {
-		return fmt.Errorf("failed to attach to worktree: %w", err)
-	}
-	return nil
-}
-
 // Remove removes a worktree.
 // This function is responsible for running `git worktree remove` and ensuring the directory is gone.
 func Remove(path string, force bool) error {

@@ -4,10 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
-
-	gh "github.com/cli/go-gh/v2"
 )
 
 // Command runs a git command in the current directory
@@ -37,22 +34,6 @@ func CommandOutputAt(path string, args ...string) (string, error) {
 	cmd.Dir = path
 	out, err := cmd.CombinedOutput()
 	return string(out), err
-}
-
-// CloneBare clones a repository as a bare repository using gh CLI
-func CloneBare(dir, repo, dest string) error {
-	dest = filepath.Join(dir, dest)
-	args := []string{"repo", "clone", repo, dest, "--", "--bare"}
-	_, stderr, err := gh.Exec(args...)
-	if err != nil {
-		return fmt.Errorf("failed to clone repository: %s", stderr.String())
-	}
-	return nil
-}
-
-// ConfigRemote sets the remote fetch spec to include all refs
-func ConfigRemote() error {
-	return Command("config", "--add", "remote.origin.fetch", "refs/heads/*:refs/remotes/origin/*")
 }
 
 // WorktreeAdd adds a worktree with a new branch
@@ -188,26 +169,4 @@ func IsGitRepository(path string) bool {
 	cmd.Dir = path
 	err := cmd.Run()
 	return err == nil
-}
-
-// GetGitDir returns the path to the .git directory
-func GetGitDir(path string) (string, error) {
-	out, err := CommandOutput(path, "rev-parse", "--git-dir")
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(out), nil
-}
-
-func GetGitCommonDir(path string) (string, error) {
-	out, err := CommandOutput(path, "rev-parse", "--git-common-dir")
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(out), nil
-}
-
-func IsBareRepository(path string) bool {
-	out, err := CommandOutput(path, "rev-parse", "--is-bare-repository")
-	return err == nil && strings.TrimSpace(out) == "true"
 }
