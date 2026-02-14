@@ -10,9 +10,7 @@ import (
 
 var (
 	// Used for flags
-	cfgFile      string
-	worktreeBase string
-	forceFlag    bool
+	forceFlag bool
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -98,25 +96,13 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Global flags
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/gh-worktree/config.yaml)")
-	rootCmd.PersistentFlags().StringVar(&worktreeBase, "worktree-base", "", "base directory for worktrees")
 	rootCmd.PersistentFlags().BoolVarP(&forceFlag, "force", "f", false, "force operation without prompts")
 }
 
 // initConfig reads in config file and ENV variables if set
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag
-		// Note: viper.SetConfigFile would be set here if needed
-	}
-
 	if err := config.Init(); err != nil {
 		// Non-fatal: continue with defaults
 		// Could log this in verbose mode
-	}
-
-	// Override config with flag if provided
-	if worktreeBase != "" {
-		config.SetWorktreeBase(worktreeBase)
 	}
 }
