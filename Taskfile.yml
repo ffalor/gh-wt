@@ -47,9 +47,10 @@ tasks:
       - go build -ldflags "-X=github.com/ffalor/gh-wt/cmd.Version={{.VERSION}}" -o gh-wt
 
   clean:
-    desc: Remove built binary
+    desc: Remove built binary and dist
     cmds:
       - rm -f gh-wt
+      - rm -rf dist
 
   install:
     desc: Install the gh extension locally
@@ -61,13 +62,3 @@ tasks:
     ignore_error: true
     cmds:
       - gh extension remove wt
-
-  run:
-    desc: Run the installed extension
-    cmds:
-      - gh wt{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
-
-  version:
-    desc: Get current version from git tags
-    cmds:
-      - git describe --tags --dirty --always
