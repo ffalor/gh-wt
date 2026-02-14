@@ -15,6 +15,7 @@ import (
 	"github.com/cli/go-gh/v2/pkg/repository"
 	"github.com/ffalor/gh-wt/internal/action"
 	"github.com/ffalor/gh-wt/internal/config"
+	"github.com/ffalor/gh-wt/internal/execext"
 	"github.com/ffalor/gh-wt/internal/git"
 	"github.com/ffalor/gh-wt/internal/logger"
 	"github.com/ffalor/gh-wt/internal/worktree"
@@ -340,6 +341,20 @@ func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
 		}); err != nil {
 			// Don't fail the whole operation if the action fails, just print a warning
 			Log.Warnf("\n⚠️  Action '%s' failed: %v\n", actionFlag, err)
+		}
+	} else if cliArgs != "" {
+		// Run CLI args directly in the worktree if no action is specified
+		Log.Outf(logger.Magenta, "\nRunning in worktree: %s\n", cliArgs)
+
+		if err := execext.RunCommand(context.Background(), &execext.RunCommandOptions{
+			Command: cliArgs,
+			Dir:     absPath,
+			Env:     os.Environ(),
+			Stdin:   os.Stdin,
+			Stdout:  os.Stdout,
+			Stderr:  os.Stderr,
+		}); err != nil {
+			Log.Warnf("\n⚠️  Command '%s' failed: %v\n", cliArgs, err)
 		}
 	}
 
