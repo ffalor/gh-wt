@@ -30,16 +30,13 @@ from GitHub pull requests, issues, or local branch names.
 
 Examples:
   # Create worktree from PR URL
-  gh worktree https://github.com/owner/repo/pull/123
+  gh worktree https://github.com/owner/repo/pull/123 -action claude -- "/review"
 
   # Create worktree from Issue URL
-  gh worktree https://github.com/owner/repo/issues/456
+  gh worktree https://github.com/owner/repo/issues/456 -action claude -- "implement issue #456"
 
-  # Create local worktree (from within a repo)
+  # Create a worktree
   gh worktree my-feature-branch
-
-  # List all worktrees
-  gh worktree list
 
   # Remove a worktree
   gh worktree remove pr_123`,

@@ -3,20 +3,42 @@ worktree_dir: "~/github/worktree"
 actions:
   - name: tmux
     cmds:
-      - tmux new-session -d -s {{.BranchName}}
-      - tmux send-keys -t {{.BranchName}} "cd {{.WorktreePath}} && vim ." C-m
-      - tmux split-window -h -t {{.BranchName}}
-      - tmux send-keys -t {{.BranchName}}.1 "cd {{.WorktreePath}} && git status" C-m
-      - tmux attach -t {{.BranchName}}
-  - name: build
+      - tmux new-session -d -s "{{.BranchName}}" -c "{{.WorktreePath}}"
+      - tmux send-keys -t "{{.BranchName}}":0 "git status" C-m
+      - tmux split-window -h -t "{{.BranchName}}":0 -c "{{.WorktreePath}}"
+      - tmux send-keys -t "{{.BranchName}}":0.1 "nvim ." C-m
+      - tmux select-pane -t "{{.BranchName}}":0.0
+      - tmux attach -t "{{.BranchName}}"
+
+  - name: claude
+    dir: "{{.WorktreePath}}"
     cmds:
-      - echo "Running action '{{.Action}}'..."
-      - task build {{.CLI_ARGS}}
-  - name: test
+      - claude -p "{{.CLI_ARGS}}"
+
+  - name: dev_bootstrap
     cmds:
-      - go test {{.CLI_ARGS}}
-  - name: internal
-    dir: "{{.WorktreePath}}/internal"
-    cmds:
-      - echo "Current directory: $(pwd)"
-      - ls -l
+      - git status
+      - |
+        if [ -f package.json ]; then
+          if [ -f pnpm-lock.yaml ] && command -v pnpm >/dev/null 2>&1; then
+            pnpm install
+          elif [ -f yarn.lock ] && command -v yarn >/dev/null 2>&1; then
+            yarn install
+          elif [ -f package-lock.json ] && command -v npm >/dev/null 2>&1; then
+            npm ci
+          elif command -v npm >/dev/null 2>&1; then
+            npm install
+          else
+            echo "No supported Node package manager found (pnpm/yarn/npm)."
+          fi
+        else
+          echo "No package.json found; skipping Node dependency install."
+        fi
+      - |
+        if [ -f package.json ]; then
+          if command -v npm >/dev/null 2>&1; then
+            npm run lint --if-present
+            npm run typecheck --if-present
+            npm run test --if-present
+          fi
+        fi
