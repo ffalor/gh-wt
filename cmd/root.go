@@ -13,23 +13,23 @@ import (
 )
 
 var (
-	// Used for flags
+	// Used for flags.
 	forceFlag bool
 	verbose   bool
 	noColor   bool
 	cliArgs   string
 )
 
-// Version is the current version of the CLI
+// Version is the current version of the CLI.
 var Version = "dev"
 
-// Commit is the git commit hash
+// Commit is the git commit hash.
 var Commit = ""
 
-// Date is the build date
+// Date is the build date.
 var Date = ""
 
-// BuiltBy is the builder
+// BuiltBy is the builder.
 var BuiltBy = ""
 
 func buildVersion(version, commit, date, builtBy string) string {
@@ -54,7 +54,7 @@ func buildVersion(version, commit, date, builtBy string) string {
 // Log is the package-level logger instance.
 var Log = logger.NewLogger(false, true)
 
-// rootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "wt [url|name]",
 	Short: "Create and manage git worktrees",
@@ -145,7 +145,7 @@ func Execute() {
 	}
 }
 
-// isKnownCommand checks if the argument is a known subcommand
+// isKnownCommand checks if the argument is a known subcommand.
 func isKnownCommand(arg string) bool {
 	knownCommands := []string{"add", "create", "rm", "remove", "action", "help", "completion"}
 	for _, cmd := range knownCommands {

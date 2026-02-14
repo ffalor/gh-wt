@@ -17,13 +17,13 @@ type Action struct {
 	Dir  string   `mapstructure:"dir"`
 }
 
-// Config holds the application configuration
+// Config holds the application configuration.
 type Config struct {
 	WorktreeBase string   `mapstructure:"worktree_dir"`
 	Actions      []Action `mapstructure:"actions"`
 }
 
-// Default values
+// Default values.
 const (
 	DefaultWorktreeBase = "~/github/worktree"
 	ConfigName          = "config"
@@ -79,7 +79,7 @@ func Save() error {
 		configDir := filepath.Join(home, ".config", "gh-worktree")
 		configFile = filepath.Join(configDir, "config.yaml")
 
-		if err := os.MkdirAll(filepath.Dir(configFile), 0755); err != nil {
+		if err := os.MkdirAll(filepath.Dir(configFile), 0o755); err != nil {
 			return fmt.Errorf("cannot create config directory: %w", err)
 		}
 	}

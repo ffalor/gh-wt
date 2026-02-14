@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Command runs a git command in the current directory
+// Command runs a git command in the current directory.
 func Command(args ...string) error {
 	cmd := exec.Command("git", args...)
 	cmd.Stdout = os.Stdout
@@ -15,20 +15,20 @@ func Command(args ...string) error {
 	return cmd.Run()
 }
 
-// CommandSilent runs a git command without output in the current directory
+// CommandSilent runs a git command without output in the current directory.
 func CommandSilent(args ...string) error {
 	cmd := exec.Command("git", args...)
 	return cmd.Run()
 }
 
-// CommandOutput runs a git command and returns the output from current directory
+// CommandOutput runs a git command and returns the output from current directory.
 func CommandOutput(args ...string) (string, error) {
 	cmd := exec.Command("git", args...)
 	out, err := cmd.CombinedOutput()
 	return string(out), err
 }
 
-// CommandOutputAt runs a git command and returns the output from specified directory
+// CommandOutputAt runs a git command and returns the output from specified directory.
 func CommandOutputAt(path string, args ...string) (string, error) {
 	cmd := exec.Command("git", args...)
 	cmd.Dir = path
@@ -36,22 +36,22 @@ func CommandOutputAt(path string, args ...string) (string, error) {
 	return string(out), err
 }
 
-// WorktreeAdd adds a worktree with a new branch
+// WorktreeAdd adds a worktree with a new branch.
 func WorktreeAdd(branch, worktreePath string) error {
 	return Command("worktree", "add", "-b", branch, worktreePath)
 }
 
-// WorktreeAddFromRef adds a worktree from a specific ref
+// WorktreeAddFromRef adds a worktree from a specific ref.
 func WorktreeAddFromRef(branch, worktreePath, ref string) error {
 	return Command("worktree", "add", "-b", branch, worktreePath, ref)
 }
 
-// WorktreeAddFromBranch adds a worktree from an existing branch
+// WorktreeAddFromBranch adds a worktree from an existing branch.
 func WorktreeAddFromBranch(branch, worktreePath string) error {
 	return Command("worktree", "add", worktreePath, branch)
 }
 
-// WorktreeRemove removes a worktree
+// WorktreeRemove removes a worktree.
 func WorktreeRemove(worktreePath string, force bool) error {
 	args := []string{"worktree", "remove", worktreePath}
 	if force {
@@ -60,13 +60,13 @@ func WorktreeRemove(worktreePath string, force bool) error {
 	return Command(args...)
 }
 
-// Fetch fetches refs from origin
+// Fetch fetches refs from origin.
 func Fetch(refs ...string) error {
 	args := append([]string{"fetch", "origin"}, refs...)
 	return Command(args...)
 }
 
-// HasUncommittedChanges checks if a worktree has uncommitted changes
+// HasUncommittedChanges checks if a worktree has uncommitted changes.
 func HasUncommittedChanges(worktreePath string) bool {
 	// Check for staged or unstaged changes
 	cmd := exec.Command("git", "status", "--porcelain")
@@ -78,13 +78,13 @@ func HasUncommittedChanges(worktreePath string) bool {
 	return len(strings.TrimSpace(string(out))) > 0
 }
 
-// WorktreeInfo represents information about a worktree
+// WorktreeInfo represents information about a worktree.
 type WorktreeInfo struct {
 	Path   string
 	Branch string
 }
 
-// GetWorktreeInfo returns worktree info (path and branch) for all worktrees
+// GetWorktreeInfo returns worktree info (path and branch) for all worktrees.
 func GetWorktreeInfo() ([]WorktreeInfo, error) {
 	out, err := CommandOutput("worktree", "list", "--porcelain")
 	if err != nil {
@@ -114,7 +114,7 @@ func GetWorktreeInfo() ([]WorktreeInfo, error) {
 	return worktrees, nil
 }
 
-// WorktreeIsRegistered checks if a worktree path is registered in git
+// WorktreeIsRegistered checks if a worktree path is registered in git.
 func WorktreeIsRegistered(worktreePath string) bool {
 	worktrees, err := GetWorktreeInfo()
 	if err != nil {
@@ -128,7 +128,7 @@ func WorktreeIsRegistered(worktreePath string) bool {
 	return false
 }
 
-// GetWorktreeBranch returns the branch that a worktree is on
+// GetWorktreeBranch returns the branch that a worktree is on.
 func GetWorktreeBranch(worktreePath string) (string, error) {
 	worktrees, err := GetWorktreeInfo()
 	if err != nil {
@@ -142,12 +142,12 @@ func GetWorktreeBranch(worktreePath string) (string, error) {
 	return "", nil
 }
 
-// WorktreePrune prunes stale worktree records
+// WorktreePrune prunes stale worktree records.
 func WorktreePrune() error {
 	return CommandSilent("worktree", "prune")
 }
 
-// IsGitRepository checks if a directory is a git repository
+// IsGitRepository checks if a directory is a git repository.
 func IsGitRepository(path string) bool {
 	cmd := exec.Command("git", "rev-parse", "--git-dir")
 	cmd.Dir = path

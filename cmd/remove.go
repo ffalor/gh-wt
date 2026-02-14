@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rmCmd represents the rm command
+// rmCmd represents the rm command.
 var rmCmd = &cobra.Command{
 	Use:     "rm [worktree-name]",
 	Short:   "Remove a worktree and its associated branch",

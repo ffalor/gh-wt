@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// addCmd represents the add command
+// addCmd represents the add command.
 var addCmd = &cobra.Command{
 	Use:     "add [url|name]",
 	Short:   "Add a new worktree",
@@ -354,14 +354,14 @@ func printSuccess(path string) {
 	Log.Outf(logger.Cyan, "  cd %s\n", path)
 }
 
-// SanitizeBranchName is moved from types.go
+// SanitizeBranchName is moved from types.go.
 func SanitizeBranchName(name string) string {
 	invalidChars := regexp.MustCompile(`[^a-zA-Z0-9_-]`)
 	return invalidChars.ReplaceAllString(name, "_")
 }
 
 // DetermineWorktreeType determines the type of worktree based on the input
-// Returns the worktree type and an error message if invalid
+// Returns the worktree type and an error message if invalid.
 func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 	u, err := url.Parse(input)
 	if err != nil {
@@ -376,12 +376,12 @@ func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 		return worktree.Local, nil
 	}
 
-	var prPattern = regexp.MustCompile(`^/[^/]+/[^/]+/pull/\d+(?:/.*)?$`)
+	prPattern := regexp.MustCompile(`^/[^/]+/[^/]+/pull/\d+(?:/.*)?$`)
 	if prPattern.MatchString(u.Path) {
 		return worktree.PR, nil
 	}
 
-	var issuePattern = regexp.MustCompile(`^/[^/]+/[^/]+/issues/\d+(?:/.*)?$`)
+	issuePattern := regexp.MustCompile(`^/[^/]+/[^/]+/issues/\d+(?:/.*)?$`)
 	if issuePattern.MatchString(u.Path) {
 		return worktree.Issue, nil
 	}

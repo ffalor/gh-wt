@@ -18,7 +18,7 @@ func Create(path, branch, startPoint string) error {
 
 	// Ensure the base directory exists
 	baseDir := filepath.Dir(path)
-	if err = os.MkdirAll(baseDir, 0755); err != nil {
+	if err = os.MkdirAll(baseDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create worktree directory: %w", err)
 	}
 

@@ -6,8 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var listActionsFlag bool
-var silentListFlag bool
+var (
+	listActionsFlag bool
+	silentListFlag  bool
+)
 
 var actionCmd = &cobra.Command{
 	Use:   "action",

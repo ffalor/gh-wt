@@ -17,23 +17,23 @@ tasks:
     desc: Run in debug mode
 
   fmt:
-    desc: Run gofumpt
+    desc: Run gofumpt on changed files
     cmds:
-      - golangci-lint run --path-mode=abs --config=".golangci.yml" --timeout=5m --fix
+      - golangci-lint run --path-mode=abs --config=".golangci.yml" --timeout=5m --fix --new-from-merge-base=main
     env:
       GOEXPERIMENT: null
 
   lint:
-    desc: Run linters
+    desc: Run linters on changed files
     cmds:
-      - golangci-lint run --path-mode=abs --config=".golangci.yml" --timeout=5m
+      - golangci-lint run --path-mode=abs --config=".golangci.yml" --timeout=5m --new-from-merge-base=main
     env:
       GOEXPERIMENT: null
 
   lint-fix:
-    desc: Run linters and fix issues
+    desc: Run linters and fix issues on changed files
     cmds:
-      - golangci-lint run --path-mode=abs --config=".golangci.yml" --timeout=5m --fix
+      - golangci-lint run --path-mode=abs --config=".golangci.yml" --timeout=5m --fix --new-from-merge-base=main
     env:
       GOEXPERIMENT: null
 
@@ -41,14 +41,6 @@ tasks:
     desc: Run tests
     cmds:
       - go test -v ./...
-
-  build:
-    desc: Build the extension binary
-    vars:
-      VERSION:
-        sh: git describe --tags --dirty --always 2>/dev/null | sed 's/^v//' || echo "dev"
-    cmds:
-      - go build -ldflags "-X=github.com/ffalor/gh-wt/cmd.Version={{.VERSION}}" -o gh-wt
 
   clean:
     desc: Remove built binary and dist
