@@ -56,7 +56,10 @@ var Log = logger.NewLogger(false, true)
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
-	Use:   "wt",
+	Use: "gh wt",
+	Annotations: map[string]string{
+		cobra.CommandDisplayNameAnnotation: "gh wt",
+	},
 	Short: "Create and manage git worktrees",
 	Long: `gh wt is a GitHub CLI extension that helps you create git worktrees. A GitHub pull request or issue url can also be used.
 
