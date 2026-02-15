@@ -48,8 +48,14 @@ tasks:
       - rm -f gh-wt
       - rm -rf dist
 
+  build:
+    desc: Build the gh extension
+    cmds:
+      - go build -o gh-wt
+
   install:
     desc: Install the gh extension locally
+    deps: [build, remove]
     cmds:
       - gh extension install . --force
 

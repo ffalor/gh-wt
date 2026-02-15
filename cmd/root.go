@@ -121,4 +121,7 @@ func init() {
 	// Version flag
 	rootCmd.Version = buildVersion(Version, Commit, Date, BuiltBy)
 	rootCmd.SetVersionTemplate(`gh-wt {{printf "version %s\n" .Version}}`)
+
+	// Add completion command
+	rootCmd.AddCommand(NewCompletionCommand())
 }
