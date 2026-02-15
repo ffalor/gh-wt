@@ -111,7 +111,9 @@ func InstallShellCompletion(verbose bool, cmd *cobra.Command) error {
 
 // installBashCompletion installs bash completion
 func installBashCompletion(verbose bool, cmd *cobra.Command) error {
-	Log.Println("Installing bash completion")
+	if verbose {
+		Log.Println("[verbose] Installing bash completion")
+	}
 
 	// Generate completion script using Cobra
 	var buf strings.Builder
