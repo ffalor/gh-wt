@@ -77,10 +77,9 @@ Supported shells:
 
 Examples:
   gh wt completion install
-  gh wt completion install --verbose`,
+	gh wt completion install --verbose`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			verbose, _ := cmd.Flags().GetBool("verbose")
-			return completion.InstallShellCompletion(verbose, cmd.Root())
+			return completion.InstallShellCompletion(Log, cmd.Root())
 		},
 	}
 
@@ -98,8 +97,7 @@ Examples:
   gh wt completion uninstall
   gh wt completion uninstall --verbose`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			verbose, _ := cmd.Flags().GetBool("verbose")
-			return completion.UninstallShellCompletion(verbose)
+			return completion.UninstallShellCompletion(Log)
 		},
 	}
 

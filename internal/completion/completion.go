@@ -2,13 +2,13 @@ package completion
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
 
+	"github.com/ffalor/gh-wt/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -23,97 +23,92 @@ const (
 	ShellUnknown    ShellType = "unknown"
 )
 
-// Log is the package-level logger instance
-var Log = log.New(os.Stderr, "", 0)
-
 // DetectShell detects the current shell from environment variables
-func DetectShell() ShellType {
-	Log.Println("Detecting current shell")
+func DetectShell(Log *logger.Logger) ShellType {
+	Log.Plainf("Detecting current shell\n")
 
 	// Check shell-specific version variables first (most reliable)
 	if os.Getenv("ZSH_VERSION") != "" {
-		Log.Println("Detected zsh from ZSH_VERSION")
+		Log.Plainf("Detected zsh from ZSH_VERSION\n")
 		return ShellZsh
 	}
 	if os.Getenv("BASH_VERSION") != "" {
-		Log.Println("Detected bash from BASH_VERSION")
+		Log.Plainf("Detected bash from BASH_VERSION\n")
 		return ShellBash
 	}
 	if os.Getenv("FISH_VERSION") != "" {
-		Log.Println("Detected fish from FISH_VERSION")
+		Log.Plainf("Detected fish from FISH_VERSION\n")
 		return ShellFish
 	}
 
 	// Fall back to $SHELL environment variable
 	shell := os.Getenv("SHELL")
 	if shell == "" {
-		Log.Println("SHELL environment variable not set, checking platform")
+		Log.Plainf("SHELL environment variable not set, checking platform\n")
 		// On Windows, check for PowerShell
 		if runtime.GOOS == "windows" {
-			Log.Println("Detected Windows, assuming PowerShell")
+			Log.Plainf("Detected Windows, assuming PowerShell\n")
 			return ShellPowerShell
 		}
-		Log.Println("Could not detect shell")
+		Log.Plainf("Could not detect shell\n")
 		return ShellUnknown
 	}
 
-	Log.Printf("SHELL environment variable: %s", shell)
+	Log.Plainf("SHELL environment variable: %s\n", shell)
 
 	// Extract shell name from path
 	shellName := filepath.Base(shell)
-	Log.Printf("Shell base name: %s", shellName)
+	Log.Plainf("Shell base name: %s\n", shellName)
 
 	switch {
 	case strings.Contains(shellName, "bash"):
-		Log.Println("Detected bash from SHELL")
+		Log.Plainf("Detected bash from SHELL\n")
 		return ShellBash
 	case strings.Contains(shellName, "zsh"):
-		Log.Println("Detected zsh from SHELL")
+		Log.Plainf("Detected zsh from SHELL\n")
 		return ShellZsh
 	case strings.Contains(shellName, "fish"):
-		Log.Println("Detected fish from SHELL")
+		Log.Plainf("Detected fish from SHELL\n")
 		return ShellFish
 	case strings.Contains(shellName, "pwsh") || strings.Contains(shellName, "powershell"):
-		Log.Println("Detected PowerShell from SHELL")
+		Log.Plainf("Detected PowerShell from SHELL\n")
 		return ShellPowerShell
 	default:
-		Log.Printf("Unknown shell: %s", shellName)
+		Log.Plainf("Unknown shell: %s\n", shellName)
 		return ShellUnknown
 	}
 }
 
 // InstallShellCompletion installs shell completion for the detected shell
-func InstallShellCompletion(verbose bool, cmd *cobra.Command) error {
-	Log.Println("Starting shell completion installation")
+func InstallShellCompletion(Log *logger.Logger, cmd *cobra.Command) error {
+	Log.VerboseOutf(logger.Default, "Starting shell completion installation\n")
 
-	shellType := DetectShell()
-	Log.Printf("Detected shell type: %s", shellType)
+	shellType := DetectShell(Log)
+	Log.VerboseOutf(logger.Default, "Detected shell type: %s\n", shellType)
 
 	if shellType == ShellUnknown {
 		return fmt.Errorf("could not detect shell type. Please install completions manually using: gh wt completion <shell>")
 	}
 
-	fmt.Fprintf(os.Stderr, "Detected shell: %s\n", shellType)
+	Log.Outf(logger.Default, "Detected shell: %s\n", shellType)
 
 	switch shellType {
 	case ShellBash:
-		return installBashCompletion(verbose, cmd)
+		return installBashCompletion(Log, cmd)
 	case ShellZsh:
-		return installZshCompletion(verbose, cmd)
+		return installZshCompletion(Log, cmd)
 	case ShellFish:
-		return installFishCompletion(verbose, cmd)
+		return installFishCompletion(Log, cmd)
 	case ShellPowerShell:
-		return installPowerShellCompletion(verbose, cmd)
+		return installPowerShellCompletion(Log, cmd)
 	default:
 		return fmt.Errorf("shell completion not supported for: %s", shellType)
 	}
 }
 
 // installBashCompletion installs bash completion
-func installBashCompletion(verbose bool, cmd *cobra.Command) error {
-	if verbose {
-		Log.Println("[verbose] Installing bash completion")
-	}
+func installBashCompletion(Log *logger.Logger, cmd *cobra.Command) error {
+	Log.VerboseOutf(logger.Default, "[verbose] Installing bash completion\n")
 
 	// Generate completion script using Cobra
 	var buf strings.Builder
@@ -171,7 +166,7 @@ func installBashCompletion(verbose bool, cmd *cobra.Command) error {
 	err = os.WriteFile(completionPath, []byte(completionScript), 0600)
 	if err != nil && strings.HasPrefix(completionPath, "/etc") {
 		// If system-wide installation fails, fall back to user directory
-		Log.Printf("Failed to install system-wide, falling back to user directory: %v", err)
+		Log.VerboseOutf(logger.Default, "Failed to install system-wide, falling back to user directory: %v\n", err)
 		completionPath = filepath.Join(homeDir, ".bash_completion.d", "gh-wt")
 		// Use restrictive permissions (0750) following principle of least privilege
 		if err := os.MkdirAll(filepath.Dir(completionPath), 0750); err != nil {
@@ -194,7 +189,7 @@ func installBashCompletion(verbose bool, cmd *cobra.Command) error {
 		// Clean and validate the path to prevent path traversal
 		cleanBashrcPath := filepath.Clean(bashrcPath)
 		if !filepath.IsAbs(cleanBashrcPath) {
-			Log.Printf("Invalid bashrc path (not absolute): %s", bashrcPath)
+			Log.VerboseOutf(logger.Default, "Invalid bashrc path (not absolute): %s\n", bashrcPath)
 			return fmt.Errorf("invalid bashrc path: %s", bashrcPath)
 		}
 		bashrcContent, err := os.ReadFile(cleanBashrcPath)
@@ -224,8 +219,8 @@ func installBashCompletion(verbose bool, cmd *cobra.Command) error {
 }
 
 // installZshCompletion installs zsh completion
-func installZshCompletion(verbose bool, cmd *cobra.Command) error {
-	Log.Println("Installing zsh completion")
+func installZshCompletion(Log *logger.Logger, cmd *cobra.Command) error {
+	Log.VerboseOutf(logger.Default, "Installing zsh completion\n")
 
 	// Generate completion script using Cobra
 	var buf strings.Builder
@@ -263,7 +258,7 @@ func installZshCompletion(verbose bool, cmd *cobra.Command) error {
 	// Clean and validate the path to prevent path traversal
 	cleanZshrcPath := filepath.Clean(zshrcPath)
 	if !filepath.IsAbs(cleanZshrcPath) {
-		Log.Printf("Invalid zshrc path (not absolute): %s", zshrcPath)
+		Log.VerboseOutf(logger.Default, "Invalid zshrc path (not absolute): %s\n", zshrcPath)
 		return fmt.Errorf("invalid zshrc path: %s", zshrcPath)
 	}
 	zshrcContent, err := os.ReadFile(cleanZshrcPath)
@@ -290,8 +285,8 @@ func installZshCompletion(verbose bool, cmd *cobra.Command) error {
 }
 
 // installFishCompletion installs fish completion
-func installFishCompletion(verbose bool, cmd *cobra.Command) error {
-	Log.Println("Installing fish completion")
+func installFishCompletion(Log *logger.Logger, cmd *cobra.Command) error {
+	Log.VerboseOutf(logger.Default, "Installing fish completion\n")
 
 	// Generate completion script using Cobra
 	var buf strings.Builder
@@ -329,8 +324,8 @@ func installFishCompletion(verbose bool, cmd *cobra.Command) error {
 }
 
 // installPowerShellCompletion installs PowerShell completion
-func installPowerShellCompletion(verbose bool, cmd *cobra.Command) error {
-	Log.Println("Installing PowerShell completion")
+func installPowerShellCompletion(Log *logger.Logger, cmd *cobra.Command) error {
+	Log.VerboseOutf(logger.Default, "Installing PowerShell completion\n")
 
 	// Determine PowerShell profile path
 	var profileCmd *exec.Cmd
@@ -368,35 +363,35 @@ func installPowerShellCompletion(verbose bool, cmd *cobra.Command) error {
 }
 
 // UninstallShellCompletion uninstalls shell completion for the detected shell
-func UninstallShellCompletion(verbose bool) error {
-	Log.Println("Starting shell completion uninstallation")
+func UninstallShellCompletion(Log *logger.Logger) error {
+	Log.VerboseOutf(logger.Default, "Starting shell completion uninstallation\n")
 
-	shellType := DetectShell()
-	Log.Printf("Detected shell type: %s", shellType)
+	shellType := DetectShell(Log)
+	Log.VerboseOutf(logger.Default, "Detected shell type: %s\n", shellType)
 
 	if shellType == ShellUnknown {
 		return fmt.Errorf("could not detect shell type. Please uninstall completions manually")
 	}
 
-	fmt.Fprintf(os.Stderr, "Detected shell: %s\n", shellType)
+	Log.Outf(logger.Default, "Detected shell: %s\n", shellType)
 
 	switch shellType {
 	case ShellBash:
-		return uninstallBashCompletion(verbose)
+		return uninstallBashCompletion(Log)
 	case ShellZsh:
-		return uninstallZshCompletion(verbose)
+		return uninstallZshCompletion(Log)
 	case ShellFish:
-		return uninstallFishCompletion(verbose)
+		return uninstallFishCompletion(Log)
 	case ShellPowerShell:
-		return uninstallPowerShellCompletion(verbose)
+		return uninstallPowerShellCompletion(Log)
 	default:
 		return fmt.Errorf("shell completion not supported for: %s", shellType)
 	}
 }
 
 // uninstallBashCompletion uninstalls bash completion
-func uninstallBashCompletion(verbose bool) error {
-	Log.Println("Uninstalling bash completion")
+func uninstallBashCompletion(Log *logger.Logger) error {
+	Log.VerboseOutf(logger.Default, "Uninstalling bash completion\n")
 
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -433,9 +428,9 @@ func uninstallBashCompletion(verbose bool) error {
 
 	for _, path := range possiblePaths {
 		if _, err := os.Stat(path); err == nil {
-			Log.Printf("Found completion file at: %s", path)
+			Log.VerboseOutf(logger.Default, "Found completion file at: %s\n", path)
 			if err := os.Remove(path); err != nil {
-				Log.Printf("Failed to remove %s: %v", path, err)
+				Log.VerboseOutf(logger.Default, "Failed to remove %s: %v\n", path, err)
 				lastErr = err
 				continue
 			}
@@ -458,8 +453,8 @@ func uninstallBashCompletion(verbose bool) error {
 }
 
 // uninstallZshCompletion uninstalls zsh completion
-func uninstallZshCompletion(verbose bool) error {
-	Log.Println("Uninstalling zsh completion")
+func uninstallZshCompletion(Log *logger.Logger) error {
+	Log.VerboseOutf(logger.Default, "Uninstalling zsh completion\n")
 
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -473,7 +468,7 @@ func uninstallZshCompletion(verbose bool) error {
 		return fmt.Errorf("no zsh completion file found at: %s", completionPath)
 	}
 
-	Log.Printf("Found completion file at: %s", completionPath)
+	Log.VerboseOutf(logger.Default, "Found completion file at: %s\n", completionPath)
 
 	if err := os.Remove(completionPath); err != nil {
 		return fmt.Errorf("failed to remove completion file: %w", err)
@@ -486,8 +481,8 @@ func uninstallZshCompletion(verbose bool) error {
 }
 
 // uninstallFishCompletion uninstalls fish completion
-func uninstallFishCompletion(verbose bool) error {
-	Log.Println("Uninstalling fish completion")
+func uninstallFishCompletion(Log *logger.Logger) error {
+	Log.VerboseOutf(logger.Default, "Uninstalling fish completion\n")
 
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -500,7 +495,7 @@ func uninstallFishCompletion(verbose bool) error {
 		return fmt.Errorf("no fish completion file found at: %s", completionPath)
 	}
 
-	Log.Printf("Found completion file at: %s", completionPath)
+	Log.VerboseOutf(logger.Default, "Found completion file at: %s\n", completionPath)
 
 	if err := os.Remove(completionPath); err != nil {
 		return fmt.Errorf("failed to remove completion file: %w", err)
@@ -513,8 +508,8 @@ func uninstallFishCompletion(verbose bool) error {
 }
 
 // uninstallPowerShellCompletion uninstalls PowerShell completion
-func uninstallPowerShellCompletion(verbose bool) error {
-	Log.Println("Uninstalling PowerShell completion")
+func uninstallPowerShellCompletion(Log *logger.Logger) error {
+	Log.VerboseOutf(logger.Default, "Uninstalling PowerShell completion\n")
 
 	// Determine PowerShell profile path
 	var profileCmd *exec.Cmd
