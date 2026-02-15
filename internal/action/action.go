@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"runtime"
 	"strings"
 	"text/template"
 
 	"github.com/ffalor/gh-wt/internal/config"
 	"github.com/ffalor/gh-wt/internal/execext"
+	"github.com/ffalor/gh-wt/internal/git"
 	"github.com/ffalor/gh-wt/internal/logger"
 	"github.com/ffalor/gh-wt/internal/worktree"
 )
@@ -97,11 +97,10 @@ func Execute(ctx context.Context, opts *ExecuteOptions) error {
 	}
 
 	// Get git root directory
-	gitRoot, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+	rootDir, err := git.GetGitRoot()
 	if err != nil {
 		return fmt.Errorf("failed to get git root directory: %w", err)
 	}
-	rootDir := strings.TrimSpace(string(gitRoot))
 
 	// Prepare data for template
 	data := struct {

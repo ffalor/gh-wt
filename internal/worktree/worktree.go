@@ -74,11 +74,7 @@ func Remove(path string, force bool) error {
 	}
 
 	// Final cleanup: ensure the directory is removed, even if it wasn't registered in git
-	if _, err := os.Stat(path); !os.IsNotExist(err) {
-		return os.RemoveAll(path)
-	}
-
-	return nil
+	return os.RemoveAll(path)
 }
 
 // Exists checks if a worktree already exists on disk.

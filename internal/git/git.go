@@ -164,3 +164,12 @@ func GetRepoName() (string, error) {
 	}
 	return filepath.Base(cwd), nil
 }
+
+// GetGitRoot returns the git root directory.
+func GetGitRoot() (string, error) {
+	out, err := CommandOutput("rev-parse", "--show-toplevel")
+	if err != nil {
+		return "", fmt.Errorf("failed to get git root directory: %w", err)
+	}
+	return strings.TrimSpace(out), nil
+}

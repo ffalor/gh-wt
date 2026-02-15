@@ -21,6 +21,9 @@ const (
 	ShellFish       ShellType = "fish"
 	ShellPowerShell ShellType = "powershell"
 	ShellUnknown    ShellType = "unknown"
+
+	DirPerm  = 0750
+	FilePerm = 0600
 )
 
 // DetectShell detects the current shell from environment variables
@@ -155,25 +158,21 @@ func installBashCompletion(Log *logger.Logger, cmd *cobra.Command) error {
 	// Create directory if needed (for user-level installations)
 	completionDir := filepath.Dir(completionPath)
 	if strings.HasPrefix(completionDir, homeDir) {
-		// Use restrictive permissions (0750) following principle of least privilege
-		if err := os.MkdirAll(completionDir, 0750); err != nil {
+		if err := os.MkdirAll(completionDir, DirPerm); err != nil {
 			return fmt.Errorf("failed to create completion directory: %w", err)
 		}
 	}
 
 	// Try to write completion file
-	// Use restrictive permissions (0600) following principle of least privilege
-	err = os.WriteFile(completionPath, []byte(completionScript), 0600)
+	err = os.WriteFile(completionPath, []byte(completionScript), FilePerm)
 	if err != nil && strings.HasPrefix(completionPath, "/etc") {
 		// If system-wide installation fails, fall back to user directory
 		Log.VerboseOutf(logger.Default, "Failed to install system-wide, falling back to user directory: %v\n", err)
 		completionPath = filepath.Join(homeDir, ".bash_completion.d", "gh-wt")
-		// Use restrictive permissions (0750) following principle of least privilege
-		if err := os.MkdirAll(filepath.Dir(completionPath), 0750); err != nil {
+		if err := os.MkdirAll(filepath.Dir(completionPath), DirPerm); err != nil {
 			return fmt.Errorf("failed to create user completion directory: %w", err)
 		}
-		// Use restrictive permissions (0600) following principle of least privilege
-		if err := os.WriteFile(completionPath, []byte(completionScript), 0600); err != nil {
+		if err := os.WriteFile(completionPath, []byte(completionScript), FilePerm); err != nil {
 			return fmt.Errorf("failed to write completion file: %w", err)
 		}
 	} else if err != nil {
@@ -194,7 +193,9 @@ func installBashCompletion(Log *logger.Logger, cmd *cobra.Command) error {
 		}
 		bashrcContent, err := os.ReadFile(cleanBashrcPath)
 		needsSourceLine := true
-		if err == nil {
+		if err != nil {
+			Log.VerboseOutf(logger.Default, "Could not read bashrc: %v\n", err)
+		} else {
 			if strings.Contains(string(bashrcContent), ".bash_completion.d") ||
 				strings.Contains(string(bashrcContent), completionPath) {
 				needsSourceLine = false
@@ -239,15 +240,13 @@ func installZshCompletion(Log *logger.Logger, cmd *cobra.Command) error {
 	// Check for fpath directories
 	// Try user's local completion directory first
 	userCompletionDir := filepath.Join(homeDir, ".zsh", "completions")
-	// Use restrictive permissions (0750) following principle of least privilege
-	if err := os.MkdirAll(userCompletionDir, 0750); err != nil {
+	if err := os.MkdirAll(userCompletionDir, DirPerm); err != nil {
 		return fmt.Errorf("failed to create completion directory: %w", err)
 	}
 	completionPath := filepath.Join(userCompletionDir, "_gh-wt")
 
 	// Write completion file
-	// Use restrictive permissions (0600) following principle of least privilege
-	if err := os.WriteFile(completionPath, []byte(completionScript), 0600); err != nil {
+	if err := os.WriteFile(completionPath, []byte(completionScript), FilePerm); err != nil {
 		return fmt.Errorf("failed to write completion file: %w", err)
 	}
 
@@ -263,7 +262,9 @@ func installZshCompletion(Log *logger.Logger, cmd *cobra.Command) error {
 	}
 	zshrcContent, err := os.ReadFile(cleanZshrcPath)
 	needsFpath := true
-	if err == nil {
+	if err != nil {
+		Log.VerboseOutf(logger.Default, "Could not read zshrc: %v\n", err)
+	} else {
 		if strings.Contains(string(zshrcContent), userCompletionDir) {
 			needsFpath = false
 		}
@@ -304,16 +305,14 @@ func installFishCompletion(Log *logger.Logger, cmd *cobra.Command) error {
 
 	// Fish completion directory
 	completionDir := filepath.Join(homeDir, ".config", "fish", "completions")
-	// Use restrictive permissions (0750) following principle of least privilege
-	if err := os.MkdirAll(completionDir, 0750); err != nil {
+	if err := os.MkdirAll(completionDir, DirPerm); err != nil {
 		return fmt.Errorf("failed to create completion directory: %w", err)
 	}
 
 	completionPath := filepath.Join(completionDir, "gh-wt.fish")
 
 	// Write completion file
-	// Use restrictive permissions (0600) following principle of least privilege
-	if err := os.WriteFile(completionPath, []byte(completionScript), 0600); err != nil {
+	if err := os.WriteFile(completionPath, []byte(completionScript), FilePerm); err != nil {
 		return fmt.Errorf("failed to write completion file: %w", err)
 	}
 
