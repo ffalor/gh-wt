@@ -168,7 +168,7 @@ Example: `feat(worktree): add support for GitHub issues`
 - Create worktree from PR URL/number: `gh wt https://github.com/owner/repo/pull/123`
 - Create worktree from Issue URL/number: `gh wt https://github.com/owner/repo/issues/456`
 - Create local worktree: `gh wt my-feature-branch`
-- Flags: `--pr`, `--issue`, `--action`, `--use-existing`
+- Flags: `--pr`, `--issue`, `-a, --action`, `--use-existing`
 
 ### Remove (`gh wt rm`)
 - Remove worktree by name: `gh wt rm <worktree-name>`

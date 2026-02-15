@@ -38,10 +38,9 @@ var addCmd = &cobra.Command{
 }
 
 func init() {
-	addCmd.Flags().BoolVarP(&useExistingFlag, "use-existing", "e", false, "use existing branch if it exists")
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
-	addCmd.Flags().StringVar(&actionFlag, "action", "", "action to run after worktree creation")
+	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
 	rootCmd.AddCommand(addCmd)
 }
 
@@ -411,8 +410,7 @@ func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 }
 
 var (
-	useExistingFlag bool
-	prFlag          string
-	issueFlag       string
-	actionFlag      string
+	prFlag     string
+	issueFlag  string
+	actionFlag string
 )

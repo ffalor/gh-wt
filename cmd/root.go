@@ -65,10 +65,10 @@ var rootCmd = &cobra.Command{
 
 Examples:
   # Create worktree from PR URL
-  gh wt add https://github.com/owner/repo/pull/123 -action claude -- "/review"
+  gh wt add https://github.com/owner/repo/pull/123 -a claude -- "/review"
 
   # Create worktree from Issue URL
-  gh wt add https://github.com/owner/repo/issues/456 -action claude -- "implement issue #456"
+  gh wt add https://github.com/owner/repo/issues/456 -a claude -- "implement issue #456"
 
   # Create a worktree
   gh wt add my-feature-branch
