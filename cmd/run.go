@@ -34,8 +34,9 @@ Examples:
 
   # Show help
   gh wt run pr_123`,
-	Args: cobra.RangeArgs(1, 2),
-	RunE: runRun,
+	Args:    cobra.RangeArgs(1, 2),
+	RunE:    runRun,
+	GroupID: "worktrees",
 }
 
 func init() {

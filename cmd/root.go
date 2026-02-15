@@ -113,6 +113,10 @@ func Execute() {
 }
 
 func init() {
+	// Define command groups
+	rootCmd.AddGroup(&cobra.Group{ID: "worktrees", Title: "Worktrees"})
+	rootCmd.AddGroup(&cobra.Group{ID: "utilities", Title: "Utilities"})
+
 	// Global flags
 	rootCmd.PersistentFlags().BoolVarP(&forceFlag, "force", "f", false, "force operation without prompts")
 	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "verbose output")
@@ -123,5 +127,14 @@ func init() {
 	rootCmd.SetVersionTemplate(`gh-wt {{printf "version %s\n" .Version}}`)
 
 	// Add completion command
-	rootCmd.AddCommand(NewCompletionCommand())
+	completionCmd := NewCompletionCommand()
+	completionCmd.GroupID = "utilities"
+	rootCmd.AddCommand(completionCmd)
+
+	// Hide help command
+	rootCmd.SetHelpCommand(&cobra.Command{
+		Use:    "help",
+		Short:  "Help about any command",
+		Hidden: true,
+	})
 }

@@ -12,9 +12,10 @@ var (
 )
 
 var actionCmd = &cobra.Command{
-	Use:   "action",
-	Short: "Manage and list actions",
-	RunE:  runAction,
+	Use:     "action",
+	Short:   "Manage and list actions",
+	RunE:    runAction,
+	GroupID: "worktrees",
 }
 
 func init() {
