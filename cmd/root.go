@@ -138,3 +138,6 @@ func init() {
 		Hidden: true,
 	})
 }
+
+// export for cli doc generation.
+func Root() *cobra.Command { return rootCmd }
