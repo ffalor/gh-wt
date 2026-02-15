@@ -52,7 +52,7 @@ func buildVersion(version, commit, date, builtBy string) string {
 }
 
 // Log is the package-level logger instance.
-var Log = logger.NewLogger(false, true)
+var Log *logger.Logger
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
