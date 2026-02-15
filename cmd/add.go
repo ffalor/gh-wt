@@ -180,8 +180,6 @@ func createFromLocal(name string) error {
 	return createWorktree(info, "HEAD")
 }
 
-// createWorktree is the central function that performs the creation.
-// It contains all the logic for path generation, user prompts, and calling the worktree package.
 func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
 	cfg, err := config.Get()
 	if err != nil {
@@ -191,99 +189,17 @@ func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
 	worktreePath := filepath.Join(baseDir, info.Repo, info.WorktreeName)
 	absPath, _ := filepath.Abs(worktreePath)
 
-	// Check conditions
 	branchExists := git.BranchExists(info.BranchName)
 	worktreeDirExists := worktree.Exists(worktreePath)
 	worktreeGitRegistered := git.WorktreeIsRegistered(worktreePath)
 
-	// Build the prompt message if there are conflicts
 	hasConflict := worktreeDirExists || worktreeGitRegistered || branchExists
 
 	if hasConflict {
-		p := prompter.New(os.Stdin, os.Stdout, os.Stderr)
-
-		// Build the "This will:" message
-		var message strings.Builder
-		message.WriteString("Target: create worktree for '")
-		message.WriteString(info.BranchName)
-		message.WriteString("'\n\n")
-		message.WriteString("This will:\n")
-
-		// Determine what worktree info we can get
-		currentBranch := ""
-		if worktreeGitRegistered {
-			currentBranch, _ = git.GetWorktreeBranch(worktreePath)
-		}
-
-		// Add worktree actions
-		if worktreeDirExists && worktreeGitRegistered {
-			// Valid worktree
-			if currentBranch != "" {
-				message.WriteString("- Remove worktree at ")
-				message.WriteString(absPath)
-				message.WriteString(" (currently on branch '")
-				message.WriteString(currentBranch)
-				message.WriteString("')\n")
-			} else {
-				message.WriteString("- Remove worktree at ")
-				message.WriteString(absPath)
-				message.WriteString("\n")
-			}
-		} else if worktreeGitRegistered {
-			// Invalid worktree (git only)
-			message.WriteString("- Remove stale worktree record at ")
-			message.WriteString(absPath)
-			message.WriteString("\n")
-		} else if worktreeDirExists { // Disk only - just remove directory
-			message.WriteString("- Remove directory at ")
-			message.WriteString(absPath)
-			message.WriteString("\n")
-		}
-
-		// Add branch actions
-		if branchExists {
-			message.WriteString("- Delete existing branch '")
-			message.WriteString(info.BranchName)
-			message.WriteString("'\n")
-		}
-
-		// Add create action
-		message.WriteString("- Create worktree and branch for '")
-		message.WriteString(info.BranchName)
-		message.WriteString("'\n")
-
-		// Check worktree for uncommitted changes
-		if worktreeDirExists && git.IsGitRepository(worktreePath) {
-			if git.HasUncommittedChanges(worktreePath) {
-				message.WriteString("\n⚠️  WARNING: Worktree at ")
-				message.WriteString(absPath)
-				message.WriteString(" has uncommitted changes that will be PERMANENTLY DELETED. Consider committing or stashing changes first.\n")
-			}
-		}
-
-		// Check branch for uncommitted changes (only if branch exists and has a worktree)
-		if branchExists {
-			// Find the worktree for this branch
-			worktrees, err := git.GetWorktreeInfo()
-			if err == nil {
-				for _, wt := range worktrees {
-					if wt.Branch == info.BranchName {
-						if git.HasUncommittedChanges(wt.Path) {
-							message.WriteString("\n⚠️ WARNING: Branch '")
-							message.WriteString(info.BranchName)
-							message.WriteString("' has uncommitted changes that will be PERMANENTLY DELETED. Consider committing or stashing changes first.\n")
-						}
-						break
-					}
-				}
-			}
-		}
-
-		message.WriteString("\nOverwrite?")
-
-		// If force flag is set, skip the prompt
 		if !forceFlag {
-			overwrite, err := p.Confirm(message.String(), false)
+			message := buildConflictMessage(info, absPath, worktreePath, worktreeDirExists, worktreeGitRegistered, branchExists)
+			p := prompter.New(os.Stdin, os.Stdout, os.Stderr)
+			overwrite, err := p.Confirm(message, false)
 			if err != nil {
 				return fmt.Errorf("failed to read confirmation: %w", err)
 			}
@@ -293,37 +209,13 @@ func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
 			}
 		}
 
-		// Perform cleanup based on what exists
-		if worktreeDirExists && worktreeGitRegistered {
-			// Valid worktree - use git to remove
-			if err := git.WorktreeRemove(worktreePath, true); err != nil {
-				return fmt.Errorf("failed to remove worktree: %w", err)
-			}
-		} else if worktreeDirExists {
-			// Disk only - just remove directory
-			if err := os.RemoveAll(worktreePath); err != nil {
-				return fmt.Errorf("failed to remove directory: %w", err)
-			}
-		} else if worktreeGitRegistered {
-			// Git only - prune the record
-			if err := git.WorktreePrune(); err != nil {
-				return fmt.Errorf("failed to prune worktree: %w", err)
-			}
-		}
-
-		// Delete branch if it exists
-		if branchExists {
-			Log.Infof("Deleting existing branch '%s'...\n", info.BranchName)
-			if err := git.BranchDelete(info.BranchName, true); err != nil {
-				return fmt.Errorf("failed to delete branch: %w", err)
-			}
+		if err := performCleanup(worktreePath, worktreeDirExists, worktreeGitRegistered, branchExists, info.BranchName); err != nil {
+			return err
 		}
 	}
 
-	// Create the new worktree.
 	err = worktree.Create(worktreePath, info.BranchName, startPoint)
 	if err != nil {
-		// Simple cleanup: if creation fails, try to remove the directory if it was created.
 		if worktree.Exists(worktreePath) {
 			os.RemoveAll(worktreePath)
 		}
@@ -332,6 +224,87 @@ func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
 
 	printSuccess(absPath)
 
+	return executePostCreation(actionFlag, cliArgs, absPath, info)
+}
+
+func buildConflictMessage(info *worktree.WorktreeInfo, absPath, worktreePath string, worktreeDirExists, worktreeGitRegistered, branchExists bool) string {
+	var message strings.Builder
+
+	fmt.Fprintf(&message, "Target: create worktree for '%s'\n\nThis will:\n", info.BranchName)
+
+	currentBranch := ""
+	if worktreeGitRegistered {
+		currentBranch, _ = git.GetWorktreeBranch(worktreePath)
+	}
+
+	if worktreeDirExists && worktreeGitRegistered {
+		if currentBranch != "" {
+			fmt.Fprintf(&message, "- Remove worktree at %s (currently on branch '%s')\n", absPath, currentBranch)
+		} else {
+			fmt.Fprintf(&message, "- Remove worktree at %s\n", absPath)
+		}
+	} else if worktreeGitRegistered {
+		fmt.Fprintf(&message, "- Remove stale worktree record at %s\n", absPath)
+	} else if worktreeDirExists {
+		fmt.Fprintf(&message, "- Remove directory at %s\n", absPath)
+	}
+
+	if branchExists {
+		fmt.Fprintf(&message, "- Delete existing branch '%s'\n", info.BranchName)
+	}
+
+	fmt.Fprintf(&message, "- Create worktree and branch for '%s'\n", info.BranchName)
+
+	if worktreeDirExists && git.IsGitRepository(worktreePath) {
+		if git.HasUncommittedChanges(worktreePath) {
+			message.WriteString(fmt.Sprintf("\n⚠️  WARNING: Worktree at %s has uncommitted changes that will be PERMANENTLY DELETED. Consider committing or stashing changes first.\n", absPath))
+		}
+	}
+
+	if branchExists {
+		worktrees, err := git.GetWorktreeInfo()
+		if err == nil {
+			for _, wt := range worktrees {
+				if wt.Branch == info.BranchName {
+					if git.HasUncommittedChanges(wt.Path) {
+						message.WriteString(fmt.Sprintf("\n⚠️ WARNING: Branch '%s' has uncommitted changes that will be PERMANENTLY DELETED. Consider committing or stashing changes first.\n", info.BranchName))
+					}
+					break
+				}
+			}
+		}
+	}
+
+	message.WriteString("\nOverwrite?")
+	return message.String()
+}
+
+func performCleanup(worktreePath string, worktreeDirExists, worktreeGitRegistered, branchExists bool, branchName string) error {
+	if worktreeDirExists && worktreeGitRegistered {
+		if err := git.WorktreeRemove(worktreePath, true); err != nil {
+			return fmt.Errorf("failed to remove worktree: %w", err)
+		}
+	} else if worktreeDirExists {
+		if err := os.RemoveAll(worktreePath); err != nil {
+			return fmt.Errorf("failed to remove directory: %w", err)
+		}
+	} else if worktreeGitRegistered {
+		if err := git.WorktreePrune(); err != nil {
+			return fmt.Errorf("failed to prune worktree: %w", err)
+		}
+	}
+
+	if branchExists {
+		Log.Infof("Deleting existing branch '%s'...\n", branchName)
+		if err := git.BranchDelete(branchName, true); err != nil {
+			return fmt.Errorf("failed to delete branch: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func executePostCreation(actionFlag, cliArgs, absPath string, info *worktree.WorktreeInfo) error {
 	if actionFlag != "" {
 		if err := action.Execute(context.Background(), &action.ExecuteOptions{
 			ActionName:   actionFlag,
@@ -344,11 +317,9 @@ func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
 			Stderr:       os.Stderr,
 			Env:          os.Environ(),
 		}); err != nil {
-			// Don't fail the whole operation if the action fails, just print a warning
 			Log.Warnf("\n⚠️  Action '%s' failed: %v\n", actionFlag, err)
 		}
 	} else if cliArgs != "" {
-		// Run CLI args directly in the worktree if no action is specified
 		Log.Outf(logger.Magenta, "\nRunning in worktree: %s\n", cliArgs)
 
 		if err := execext.RunCommand(context.Background(), &execext.RunCommandOptions{
