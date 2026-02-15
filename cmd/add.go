@@ -79,7 +79,7 @@ func createFromPR(value string) error {
 	args := []string{"pr", "view", value, "--json", "number,title,headRefName,url"}
 	stdout, stderr, err := gh.Exec(args...)
 	if err != nil {
-		return fmt.Errorf("failed to fetch PR info: %s\n%s", err, stderr.String())
+		return fmt.Errorf("failed to fetch PR info: %w\n%s", err, stderr.String())
 	}
 
 	var prInfo struct {
@@ -124,7 +124,7 @@ func createFromIssue(value string) error {
 	args := []string{"issue", "view", value, "--json", "number,title,url"}
 	stdout, stderr, err := gh.Exec(args...)
 	if err != nil {
-		return fmt.Errorf("failed to fetch Issue info: %s\n%s", err, stderr.String())
+		return fmt.Errorf("failed to fetch Issue info: %w\n%s", err, stderr.String())
 	}
 
 	var issueInfo struct {
