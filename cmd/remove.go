@@ -19,6 +19,7 @@ var rmCmd = &cobra.Command{
 	Aliases: []string{"remove"},
 	Args:    cobra.ExactArgs(1),
 	RunE:    runRm,
+	GroupID: "worktrees",
 }
 
 func init() {
