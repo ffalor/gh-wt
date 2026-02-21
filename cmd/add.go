@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc"
 	gh "github.com/cli/go-gh/v2"
 	"github.com/cli/go-gh/v2/pkg/prompter"
 	"github.com/cli/go-gh/v2/pkg/repository"
@@ -26,11 +27,22 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add [url|name]",
 	Short: "Add a new worktree",
-	Long: `Add a new git worktree from either:
-  - A GitHub pull request URL or number
-  - A GitHub issue URL or number
-  - A name to use for the new worktree and branch
-`,
+	Long: heredoc.Doc(`
+		Add a new git worktree from either:
+		  - A GitHub pull request URL or number
+		  - A GitHub issue URL or number
+		  - A name to use for the new worktree and branch
+	`),
+	Example: heredoc.Doc(`
+		# Create worktree from PR URL
+		gh wt add https://github.com/owner/repo/pull/123
+
+		# Create worktree from Issue URL
+		gh wt add https://github.com/owner/repo/issues/456
+
+		# Create a worktree from a local branch
+		gh wt add my-feature-branch
+	`),
 	Aliases: []string{"create"},
 	Args:    cobra.RangeArgs(0, 1),
 	RunE:    runAdd,

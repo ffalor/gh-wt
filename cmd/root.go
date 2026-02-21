@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/MakeNowJust/heredoc"
 	"github.com/ffalor/gh-wt/internal/config"
 	"github.com/ffalor/gh-wt/internal/logger"
 	"github.com/spf13/cobra"
@@ -61,20 +62,23 @@ var rootCmd = &cobra.Command{
 		cobra.CommandDisplayNameAnnotation: "gh wt",
 	},
 	Short: "Create and manage git worktrees",
-	Long: `gh wt is a GitHub CLI extension that helps you create git worktrees. A GitHub pull request or issue url can also be used.
+	Long: heredoc.Doc(`
+		gh wt is a GitHub CLI extension that helps you create git worktrees.
+		A GitHub pull request or issue URL can also be used.
+	`),
+	Example: heredoc.Doc(`
+		# Create worktree from PR URL
+		gh wt add https://github.com/owner/repo/pull/123 -a claude -- "/review"
 
-Examples:
-  # Create worktree from PR URL
-  gh wt add https://github.com/owner/repo/pull/123 -a claude -- "/review"
+		# Create worktree from Issue URL
+		gh wt add https://github.com/owner/repo/issues/456 -a claude -- "implement issue #456"
 
-  # Create worktree from Issue URL
-  gh wt add https://github.com/owner/repo/issues/456 -a claude -- "implement issue #456"
+		# Create a worktree
+		gh wt add my-feature-branch
 
-  # Create a worktree
-  gh wt add my-feature-branch
-
-  # Remove a worktree
-  gh wt rm pr_123`,
+		# Remove a worktree
+		gh wt rm pr_123
+	`),
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.Load()
 		if err != nil {

@@ -121,10 +121,10 @@ func TestCompletionCommand_Examples(t *testing.T) {
 	cmd := NewCompletionCommand()
 
 	// Verify examples are present for all shells
-	assert.Contains(t, cmd.Long, "gh wt completion bash")
-	assert.Contains(t, cmd.Long, "gh wt completion zsh")
-	assert.Contains(t, cmd.Long, "gh wt completion fish")
-	assert.Contains(t, cmd.Long, "gh wt completion powershell")
+	assert.Contains(t, cmd.Example, "gh wt completion bash")
+	assert.Contains(t, cmd.Example, "gh wt completion zsh")
+	assert.Contains(t, cmd.Example, "gh wt completion fish")
+	assert.Contains(t, cmd.Example, "gh wt completion powershell")
 }
 
 func TestCompletionCommand_ValidArgs(t *testing.T) {

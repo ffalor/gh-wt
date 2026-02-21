@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/MakeNowJust/heredoc"
 	"github.com/cli/go-gh/v2/pkg/prompter"
 	"github.com/cli/go-gh/v2/pkg/repository"
 	"github.com/ffalor/gh-wt/internal/action"
@@ -19,21 +20,23 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run <worktree> [action] [-- command]",
 	Short: "Run an action or command in an existing worktree",
-	Long: `Run an action or command in an existing worktree.
+	Long: heredoc.Doc(`
+		Run an action or command in an existing worktree.
 
-Use this command to:
-- Run configured actions on worktrees that were created without an action
-- Run commands directly in a worktree
+		Use this command to:
+		- Run configured actions on worktrees that were created without an action
+		- Run commands directly in a worktree
+	`),
+	Example: heredoc.Doc(`
+		# Run named action on worktree
+		gh wt run pr_123 claude -- fix issue #456
 
-Examples:
-  # Run named action on worktree
-  gh wt run pr_123 claude -- fix issue #456
+		# Run command directly in worktree
+		gh wt run pr_123 -- ls
 
-  # Run command directly in worktree
-  gh wt run pr_123 -- ls
-
-  # Show help
-  gh wt run pr_123`,
+		# Show help
+		gh wt run pr_123
+	`),
 	Args:    cobra.RangeArgs(1, 2),
 	RunE:    runRun,
 	GroupID: "worktrees",

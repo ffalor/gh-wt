@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/MakeNowJust/heredoc"
 	"github.com/ffalor/gh-wt/internal/config"
 	"github.com/ffalor/gh-wt/internal/logger"
 	"github.com/spf13/cobra"
@@ -12,8 +13,18 @@ var (
 )
 
 var actionCmd = &cobra.Command{
-	Use:     "action",
-	Short:   "Manage and list actions",
+	Use:   "action",
+	Short: "Manage and list actions",
+	Long: heredoc.Doc(`
+		Manage and list actions configured in the gh-wt config file.
+	`),
+	Example: heredoc.Doc(`
+		# List all available actions
+		gh wt action --list
+
+		# List action names only (silent mode)
+		gh wt action -s
+	`),
 	RunE:    runAction,
 	GroupID: "worktrees",
 }

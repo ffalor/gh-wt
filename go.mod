@@ -3,6 +3,7 @@ module github.com/ffalor/gh-wt
 go 1.25.0
 
 require (
+	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/cli/go-gh/v2 v2.13.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
