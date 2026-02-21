@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/MakeNowJust/heredoc"
 	"github.com/cli/go-gh/v2/pkg/prompter"
 	"github.com/ffalor/gh-wt/internal/git"
 	"github.com/ffalor/gh-wt/internal/logger"
@@ -13,9 +14,19 @@ import (
 
 // rmCmd represents the rm command.
 var rmCmd = &cobra.Command{
-	Use:     "rm [worktree-name]",
-	Short:   "Remove a worktree and its associated branch",
-	Long:    `Remove a worktree and its associated branch. Will prompt if there are uncommitted changes (unless --force is used).`,
+	Use:   "rm [worktree-name]",
+	Short: "Remove a worktree and its associated branch",
+	Long: heredoc.Doc(`
+		Remove a worktree and its associated branch. Will prompt if there are
+		uncommitted changes (unless --force is used).
+	`),
+	Example: heredoc.Doc(`
+		# Remove a worktree by name
+		gh wt rm pr_123
+
+		# Remove a worktree with force
+		gh wt rm issue_456 --force
+	`),
 	Aliases: []string{"remove"},
 	Args:    cobra.ExactArgs(1),
 	RunE:    runRm,
