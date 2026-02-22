@@ -383,18 +383,16 @@ pre code {
 
 .copy-button {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 0.5rem;
+  right: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.75rem;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
+  justify-content: center;
+  padding: 0.4rem;
+  background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+  border: none;
   border-radius: 6px;
   color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   z-index: 10;
@@ -407,13 +405,11 @@ pre code {
 
 .copy-button:hover {
   background: var(--bg-elevated);
-  border-color: var(--color-cyan);
   color: var(--color-cyan);
   box-shadow: 0 0 10px rgba(0, 255, 249, 0.2);
 }
 
 .copy-button.copied {
-  border-color: var(--color-green);
   color: var(--color-green);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
   opacity: 1;
@@ -425,9 +421,7 @@ pre code {
 }
 
 .copy-text {
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
+  display: none;
 }
 
 @keyframes copyPulse {
@@ -448,13 +442,11 @@ pre code {
   .copy-button:focus,
   .copy-button:active {
     background: var(--bg-tertiary);
-    border-color: var(--border-color);
     color: var(--text-secondary);
     box-shadow: none;
   }
 
   .copy-button.copied {
-    border-color: var(--color-green);
     color: var(--color-green);
     box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
     opacity: 1;
