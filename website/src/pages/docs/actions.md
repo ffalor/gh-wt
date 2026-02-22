@@ -186,32 +186,6 @@ title: Actions
     margin: 1rem 0 1.5rem;
   }
 
-  .config-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-    font-size: 0.9rem;
-  }
-
-  .config-table th,
-  .config-table td {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border: 1px solid var(--border-color);
-  }
-
-  .config-table th {
-    background: var(--bg-tertiary);
-    color: var(--color-cyan);
-    font-family: var(--font-display);
-    font-weight: 600;
-  }
-
-  .config-table td {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-  }
-
   .config-table code {
     color: var(--color-amber);
   }
