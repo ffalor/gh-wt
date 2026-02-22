@@ -150,7 +150,10 @@ code {
 
 pre {
   font-family: var(--font-mono);
-  background: var(--bg-secondary) !important;
+  background: 
+    linear-gradient(90deg, var(--color-cyan), var(--color-magenta)) top / 100% 3px no-repeat,
+    var(--bg-secondary);
+  background-clip: border-box, padding-box;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 1.5rem;
@@ -159,14 +162,7 @@ pre {
 }
 
 pre::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-cyan), var(--color-magenta));
-  border-radius: 8px 8px 0 0;
+  display: none;
 }
 
 pre code {
@@ -214,10 +210,15 @@ pre code {
   border-collapse: collapse;
   margin: 1.5rem 0;
   font-size: 0.9rem;
-  overflow-x: auto;
-  display: block;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
+}
+
+@media (max-width: 768px) {
+  .config-table {
+    overflow-x: auto;
+    display: block;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+  }
 }
 
 .config-table thead,
@@ -398,7 +399,7 @@ pre code {
   transition: all var(--transition-fast);
   z-index: 10;
   opacity: 0;
-}
+  }
 
 .code-block-wrapper:hover .copy-button {
   opacity: 1;
@@ -436,4 +437,26 @@ pre code {
 
 .copy-button.copied .copy-text {
   animation: copyPulse 0.5s ease;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .copy-button {
+    opacity: 1;
+  }
+
+  .copy-button:hover,
+  .copy-button:focus,
+  .copy-button:active {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+    box-shadow: none;
+  }
+
+  .copy-button.copied {
+    border-color: var(--color-green);
+    color: var(--color-green);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+    opacity: 1;
+  }
 }

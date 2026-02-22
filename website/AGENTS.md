@@ -2,6 +2,8 @@
 
 Documentation website for `gh wt` GitHub CLI extension. Built with Astro and MDX, hosted on GitHub Pages.
 
+Always load the frontend-design skill when working on the website.
+
 ## Tech Stack
 
 - **Framework**: Astro 5.x
