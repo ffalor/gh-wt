@@ -55,7 +55,7 @@ var addCmd = &cobra.Command{
 func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
-	addCmd.Flags().StringVar(&nameFlag, "name", "", "name to use for the worktree (overrides default for PR/Issue)")
+	addCmd.Flags().StringVarP(&nameFlag, "name", "n", "", "name to use for the worktree (overrides default for PR/Issue)")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
 	rootCmd.AddCommand(addCmd)
 }
