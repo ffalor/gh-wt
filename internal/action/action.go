@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"text/template"
@@ -105,6 +106,7 @@ func Execute(ctx context.Context, opts *ExecuteOptions) error {
 	// Prepare data for template
 	data := struct {
 		WorktreePath string
+		WorktreeName string
 		Action       string
 		CLI_ARGS     string
 		OS           string
@@ -113,6 +115,7 @@ func Execute(ctx context.Context, opts *ExecuteOptions) error {
 		*worktree.WorktreeInfo
 	}{
 		WorktreePath: opts.WorktreePath,
+		WorktreeName: filepath.Base(opts.WorktreePath),
 		Action:       opts.ActionName,
 		CLI_ARGS:     opts.CLIArgs,
 		OS:           runtime.GOOS,

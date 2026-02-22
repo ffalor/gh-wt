@@ -197,6 +197,7 @@ actions:
 Action template variables:
 
 - `{{.WorktreePath}}` - Path to worktree
+- `{{.WorktreeName}}` - Name of the worktree directory
 - `{{.BranchName}}` - Branch name
 - `{{.Action}}` - Action name
 - `{{.CLI_ARGS}}` - CLI arguments after --
