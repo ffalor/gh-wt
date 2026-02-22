@@ -44,10 +44,10 @@ var addCmd = &cobra.Command{
 		gh wt add my-feature-branch
 
 		# Create worktree from a specific branch
-		gh wt add my-feature-branch --base develop
+		gh wt add my-feature-branch --start-point develop
 
 		# Create worktree from a specific commit
-		gh wt add my-feature-branch --base abc123
+		gh wt add my-feature-branch --start-point abc123
 	`),
 	Aliases: []string{"create"},
 	Args:    cobra.RangeArgs(0, 1),
@@ -59,7 +59,7 @@ func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
-	addCmd.Flags().StringVarP(&baseFlag, "base", "b", "", "starting point for the new branch (e.g., branch, tag, commit)")
+	addCmd.Flags().StringVarP(&baseFlag, "start-point", "s", "", "starting point for the new branch (e.g., branch, tag, commit)")
 	rootCmd.AddCommand(addCmd)
 }
 
