@@ -64,3 +64,31 @@ tasks:
     ignore_error: true
     cmds:
       - gh extension remove wt
+
+  # Website Development Tasks
+
+  website:dev:
+    desc: Run the website development server
+    dir: website
+    cmds:
+      - npm run dev
+    interactive: true
+
+  website:build:
+    desc: Build the website for production
+    dir: website
+    cmds:
+      - npm run build
+
+  website:preview:
+    desc: Preview the built website locally
+    dir: website
+    cmds:
+      - npm run preview
+    interactive: true
+
+  website:docs:generate:
+    desc: Generate CLI documentation from command help
+    dir: website
+    cmds:
+      - npm run docs:generate

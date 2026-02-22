@@ -11,25 +11,38 @@ Documentation website for `gh wt` GitHub CLI extension. Built with Astro and MDX
 
 ## Development Commands
 
+The project uses [Task](https://taskfile.dev) for running development commands. Make sure you have Task installed.
+
 ### Running the Website
 
 ```bash
-cd website
-npm run dev      # Never run this unless asked
-npm run start   # Never run this unless asked
-npm run build   # Build for production (includes docs generation)
-npm run preview # Never run this unless asked
+task website:dev      # Start development server (interactive)
+task website:build    # Build for production
+task website:preview  # Preview built website locally
 ```
 
 ### Documentation Generation
 
 ```bash
-npm run docs:generate  # Generate CLI docs from command help
+task website:docs:generate  # Generate CLI docs from command help
 ```
+
+### Testing Changes
+
+Use the `agent-browser` skill to test website changes in a real browser:
+
+```bash
+use_skill with skill_name: "agent-browser"
+```
+
+After activating the skill, you can navigate to the development server, verify pages load correctly, test interactions, and take screenshots to confirm visual changes work as expected.
 
 ### Astro Commands
 
+If needed, you can also run Astro commands directly:
+
 ```bash
+cd website
 npm run astro -- --help  # View all Astro commands
 ```
 
@@ -101,7 +114,7 @@ CLI documentation is auto-generated from the Go source code using the `docs:gene
 After modifying CLI commands in Go code:
 
 ```bash
-npm run docs:generate
+task website:docs:generate
 ```
 
 This will regenerate all CLI documentation pages from command help output.
@@ -126,7 +139,7 @@ title: "Page Title"
 CLI command pages are auto-generated. To add a new command:
 
 1. Add the command in `cmd/` package
-2. Run `npm run docs:generate` to regenerate docs
+2. Run `task website:docs:generate` to regenerate docs
 
 ## CSS Guidelines
 

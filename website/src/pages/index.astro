@@ -9,19 +9,19 @@ import CommandCard from '../components/CommandCard.astro';
   <!-- Hero Section with Terminal Demo -->
   <section class="hero-glow">
     <div class="hero-container">
-      <h1 class="hero-title fade-in-up delay-1">
+      <h1 class="hero-title animate-hero-item" style="--delay: 0">
         <NeonText as="span" color="cyan" size="xl">gh-wt</NeonText>
         <br />
         <span class="hero-subtitle">Worktree Manager</span>
       </h1>
       
-      <p class="hero-description fade-in-up delay-2">
+      <p class="hero-description animate-hero-item" style="--delay: 1">
         Manage git worktrees from GitHub PRs, Issues, and local branches.
         <br class="hide-mobile" />
         Built for developers who work in the terminal.
       </p>
       
-      <div class="hero-install-row fade-in-up delay-3">
+      <div class="hero-install-row animate-hero-item" style="--delay: 2">
         <div class="hero-install-command">
           <code class="install-code">
             <span class="prompt">$</span> gh extension install ffalor/gh-wt
@@ -37,7 +37,7 @@ import CommandCard from '../components/CommandCard.astro';
             </svg>
           </button>
         </div>
-        <a href="https://github.com/ffalor/gh-wt" class="github-link" target="_blank" rel="noopener" aria-label="View on GitHub">
+        <a href="https://github.com/ffalor/gh-wt" class="github-link animate-hero-item" style="--delay: 3" target="_blank" rel="noopener" aria-label="View on GitHub">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
           </svg>
@@ -49,22 +49,22 @@ import CommandCard from '../components/CommandCard.astro';
 
 
   <section class="see-it-in-action">
-    <h2 class="section-title">
+    <h2 class="section-title animate-on-scroll">
       <NeonText as="span" color="cyan">See It In Action</NeonText>
     </h2>
     
-    <div class="terminal-section">
+    <div class="terminal-section animate-on-scroll">
       <TerminalHero />
 
     </div>
   </section>
   <section class="capabilities">
-    <h2 class="section-title">
+    <h2 class="section-title animate-on-scroll">
       <NeonText as="span" color="magenta">Capabilities</NeonText>
     </h2>
     
     <div class="capabilities-grid">
-      <div class="capability-card fade-in-up delay-1">
+      <div class="capability-card animate-on-scroll" style="--card-index: 0">
         <div class="capability-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -74,7 +74,7 @@ import CommandCard from '../components/CommandCard.astro';
         <p>Reusable actions with template variables like {"{{.BranchName}}"}. Run with -a on create or run.</p>
       </div>
       
-      <div class="capability-card fade-in-up delay-2">
+      <div class="capability-card animate-on-scroll" style="--card-index: 1">
         <div class="capability-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <polyline points="4 17 10 11 4 5"/>
@@ -84,7 +84,7 @@ import CommandCard from '../components/CommandCard.astro';
         <h3>Run</h3>
         <p>Execute actions or run any command in a worktree without needing to switch directories.</p>
       </div>
-      <div class="capability-card fade-in-up delay-3">
+      <div class="capability-card animate-on-scroll" style="--card-index: 2">
         <div class="capability-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
@@ -94,7 +94,7 @@ import CommandCard from '../components/CommandCard.astro';
         <p>Create a worktree from any PR URL with a single command.</p>
       </div>
       
-      <div class="capability-card fade-in-up delay-4">
+      <div class="capability-card animate-on-scroll" style="--card-index: 3">
         <div class="capability-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="10" />
@@ -111,6 +111,38 @@ import CommandCard from '../components/CommandCard.astro';
 </DocsLayout>
 
 <script>
+  // Scroll-triggered animations using IntersectionObserver
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px 0px -50px 0px',
+    threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  // Observe all elements with animate-on-scroll class
+  document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Hero entrance animations
+  document.addEventListener('DOMContentLoaded', () => {
+    const heroItems = document.querySelectorAll('.animate-hero-item');
+    heroItems.forEach((item, index) => {
+      const delay = parseInt(item.style.getPropertyValue('--delay')) || index;
+      setTimeout(() => {
+        item.classList.add('visible');
+      }, delay * 150 + 300);
+    });
+  });
+
   // Copy to clipboard functionality
   document.querySelectorAll('.hero-copy-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -123,6 +155,138 @@ import CommandCard from '../components/CommandCard.astro';
 </script>
 
 <style>
+  /* ==================== ANIMATIONS ==================== */
+  
+  /* Hero Entrance Animations */
+  .animate-hero-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-hero-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ==================== SCROLL-TRIGGERED ANIMATIONS ==================== */
+  
+  /* Section titles and terminal - fade in from bottom */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Capability Cards - staggered entrance */
+  .capability-card.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--card-index, 0) * 0.12s);
+  }
+
+  .capability-card.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Capability Card hover effects - enhanced */
+  .capability-card {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease,
+                background 0.4s ease;
+  }
+
+  .capability-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 255, 249, 0.05) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .capability-card:hover::before {
+    opacity: 1;
+  }
+
+  .capability-card .capability-icon {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                color 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+
+  .capability-card:hover .capability-icon {
+    transform: scale(1.1) rotate(-5deg);
+    color: var(--color-magenta);
+    box-shadow: 0 0 25px rgba(255, 0, 255, 0.3);
+  }
+
+  /* Neon glow pulse on hover */
+  @keyframes neonPulse {
+    0%, 100% { 
+      box-shadow: 0 0 10px rgba(0, 255, 249, 0.3), 
+                  0 0 20px rgba(0, 255, 249, 0.1);
+    }
+    50% { 
+      box-shadow: 0 0 15px rgba(0, 255, 249, 0.5), 
+                  0 0 30px rgba(0, 255, 249, 0.2),
+                  0 0 40px rgba(0, 255, 249, 0.1);
+    }
+  }
+
+  .capability-card:hover {
+    animation: neonPulse 2s ease-in-out infinite;
+    border-color: var(--color-cyan);
+  }
+
+  /* Section title glow animation */
+  .section-title.animate-on-scroll.visible {
+    animation: titleGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes titleGlow {
+    0%, 100% { 
+      text-shadow: 0 0 10px rgba(0, 255, 249, 0.3);
+    }
+    50% { 
+      text-shadow: 0 0 20px rgba(0, 255, 249, 0.5),
+                   0 0 30px rgba(0, 255, 249, 0.2);
+    }
+  }
+
+  .capabilities .section-title.animate-on-scroll.visible {
+    animation: titleGlowMagenta 3s ease-in-out infinite;
+  }
+
+  @keyframes titleGlowMagenta {
+    0%, 100% { 
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+    }
+    50% { 
+      text-shadow: 0 0 20px rgba(255, 0, 255, 0.5),
+                   0 0 30px rgba(255, 0, 255, 0.2);
+    }
+  }
+
   /* Hero Section - Keep original intact */
   .hero-glow {
     position: relative;
@@ -139,12 +303,24 @@ import CommandCard from '../components/CommandCard.astro';
     width: 800px;
     height: 500px;
     background: radial-gradient(ellipse, 
-      rgba(0, 255, 249, 0.08) 0%, 
-      rgba(255, 0, 255, 0.04) 40%,
+      rgba(0, 255, 249, 0.12) 0%, 
+      rgba(255, 0, 255, 0.06) 40%,
       transparent 70%
     );
     pointer-events: none;
     z-index: 0;
+    animation: heroGlow 3.5s ease-in-out infinite;
+  }
+
+  @keyframes heroGlow {
+    0%, 100% { 
+      opacity: 0.6;
+      transform: translateX(-50%) scale(1);
+    }
+    50% { 
+      opacity: 1;
+      transform: translateX(-50%) scale(1.15);
+    }
   }
 
   .hero-container {
@@ -240,6 +416,16 @@ import CommandCard from '../components/CommandCard.astro';
       0 0 0 1px var(--border-color),
       0 4px 20px rgba(0, 0, 0, 0.4);
     transition: all var(--transition-fast);
+    position: relative;
+  }
+
+  .hero-install-command::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 249, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .hero-install-command:hover {
@@ -248,6 +434,11 @@ import CommandCard from '../components/CommandCard.astro';
       0 0 0 1px var(--color-cyan),
       0 0 20px rgba(0, 255, 249, 0.15),
       0 4px 20px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .hero-install-command:hover::before {
+    opacity: 1;
   }
 
   .install-code {
@@ -359,11 +550,48 @@ import CommandCard from '../components/CommandCard.astro';
     padding: 0.5rem;
     border-radius: 6px;
     transition: var(--transition-fast);
+    position: relative;
+  }
+
+  .github-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    background: radial-gradient(circle at center, rgba(0, 255, 249, 0.15), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .github-link:hover {
     color: var(--text-primary);
     background: var(--bg-tertiary);
+  }
+
+  .github-link:hover::before {
+    opacity: 1;
+    animation: linkPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes linkPulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 1; }
+  }
+
+  /* Hero subtitle breathing animation */
+  .hero-subtitle {
+    animation: subtitleBreath 4s ease-in-out infinite;
+  }
+
+  @keyframes subtitleBreath {
+    0%, 100% { 
+      opacity: 0.8;
+      text-shadow: 0 0 5px rgba(160, 160, 176, 0.3);
+    }
+    50% { 
+      opacity: 1;
+      text-shadow: 0 0 15px rgba(160, 160, 176, 0.5);
+    }
   }
 
   .hero-actions {
