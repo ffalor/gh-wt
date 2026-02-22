@@ -214,7 +214,7 @@ func createFromLocal(name string) error {
 		Type:         worktree.Local,
 		Repo:         repoName,
 		BranchName:   sanitizedBranchName,
-		WorktreeName: name,
+		WorktreeName: worktreeName,
 	}
 
 	return createWorktree(info, startPointFlag)
@@ -425,5 +425,5 @@ var (
 	issueFlag      string
 	actionFlag     string
 	startPointFlag string
-  nameFlag       string
+	nameFlag       string
 )
