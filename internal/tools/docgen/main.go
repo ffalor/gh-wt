@@ -104,7 +104,11 @@ func genMarkdown(buf *bytes.Buffer, cmd *cobra.Command) error {
 	if cmd.Long != "" {
 		buf.WriteString(cmd.Long + "\n\n")
 	}
-	fmt.Fprintf(buf, "```\n%s\n```\n\n", cmd.UseLine())
+	synopsis := cmd.CommandPath()
+	if cmd.Parent() != nil {
+		synopsis = cmd.UseLine()
+	}
+	fmt.Fprintf(buf, "```\n%s\n```\n\n", synopsis)
 
 	// Examples
 	if cmd.Example != "" {

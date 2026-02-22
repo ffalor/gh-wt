@@ -150,19 +150,39 @@ code {
 
 pre {
   font-family: var(--font-mono);
-  background: 
-    linear-gradient(90deg, var(--color-cyan), var(--color-magenta)) top / 100% 3px no-repeat,
-    var(--bg-secondary);
-  background-clip: border-box, padding-box;
+  background: var(--bg-secondary) !important;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 1.5rem;
-  overflow-x: auto;
+  overflow-x: auto !important;
+  white-space: pre !important;
   position: relative;
 }
 
 pre::before {
-  display: none;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-cyan), var(--color-magenta));
+  border-radius: 8px 8px 0 0;
+}
+
+@media (max-width: 768px) {
+  pre {
+    background: 
+      linear-gradient(90deg, var(--color-cyan), var(--color-magenta)) top / 100% 3px no-repeat,
+      var(--bg-secondary) !important;
+    background-clip: border-box, padding-box;
+    overflow-x: auto !important;
+    white-space: pre !important;
+  }
+
+  pre::before {
+    display: none;
+  }
 }
 
 pre code {
@@ -383,21 +403,23 @@ pre code {
 
 .copy-button {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 0.75rem;
+  right: 0.75rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.4rem;
-  background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
-  border: none;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   cursor: pointer;
   transition: all var(--transition-fast);
   z-index: 10;
   opacity: 0;
-  }
+}
 
 .code-block-wrapper:hover .copy-button {
   opacity: 1;
@@ -405,11 +427,13 @@ pre code {
 
 .copy-button:hover {
   background: var(--bg-elevated);
+  border-color: var(--color-cyan);
   color: var(--color-cyan);
   box-shadow: 0 0 10px rgba(0, 255, 249, 0.2);
 }
 
 .copy-button.copied {
+  border-color: var(--color-green);
   color: var(--color-green);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
   opacity: 1;
@@ -421,7 +445,9 @@ pre code {
 }
 
 .copy-text {
-  display: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
 }
 
 @keyframes copyPulse {
@@ -436,6 +462,14 @@ pre code {
 @media (hover: none), (pointer: coarse) {
   .copy-button {
     opacity: 1;
+    padding: 0.4rem;
+    justify-content: center;
+    border: none;
+    background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+  }
+
+  .copy-text {
+    display: none;
   }
 
   .copy-button:hover,
@@ -444,11 +478,13 @@ pre code {
     background: var(--bg-tertiary);
     color: var(--text-secondary);
     box-shadow: none;
+    border: 1px solid var(--border-color);
   }
 
   .copy-button.copied {
     color: var(--color-green);
     box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
     opacity: 1;
+    border: none;
   }
 }
