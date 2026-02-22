@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/cli/go-gh/v2/pkg/prompter"
@@ -88,24 +90,57 @@ func runRm(cmd *cobra.Command, args []string) error {
 		force = true // User confirmed.
 	}
 
+	// Extract the worktree name from the path for display
+	worktreeDisplayName := getWorktreeDisplayName(targetWorktree.Path)
+	worktreePathDisplay := getTildePath(targetWorktree.Path)
+
+	// Print the header line
+	Log.Infof("Removing worktree %s...\n", worktreeDisplayName)
+
 	// 1. Remove the worktree directory and git metadata.
-	Log.Infof("Removing worktree '%s'...\n", targetWorktree.Path)
 	if err := worktree.Remove(targetWorktree.Path, force); err != nil {
 		return fmt.Errorf("failed to remove worktree: %w", err)
 	}
-	Log.Outf(logger.Green, "Successfully removed worktree directory.\n")
+
+	Log.Outf(logger.Default, "Worktree: %s\n", worktreePathDisplay)
+
+	if targetWorktree.Branch != "" {
+		Log.Outf(logger.Default, "Branch: %s\n", targetWorktree.Branch)
+	} else {
+		Log.Outf(logger.Default, "Branch: <none>\n")
+	}
 
 	// 2. Delete the associated branch if we found one.
 	if targetWorktree.Branch != "" {
-		Log.Infof("Deleting branch '%s'...\n", targetWorktree.Branch)
 		if err := git.BranchDelete(targetWorktree.Branch, true); err != nil {
 			// This is not a fatal error, as the primary goal (removing the worktree) succeeded.
 			// The branch might be the main branch or have other worktrees, so git will prevent its deletion.
-			return fmt.Errorf("worktree removed, but failed to delete branch '%s': %w. You may need to remove it manually", targetWorktree.Branch, err)
+			Log.Warnf("Failed to delete branch '%s': %v. You may need to remove it manually.\n", targetWorktree.Branch, err)
 		}
-		Log.Outf(logger.Green, "Successfully deleted branch '%s'.\n", targetWorktree.Branch)
 	}
 
-	Log.Outf(logger.Green, "\nWorktree '%s' and branch '%s' removed successfully.\n", targetWorktree.Path, targetWorktree.Branch)
+	// Print the details and success message
+
+	Log.Outf(logger.Green, "✓ Worktree removed successfully!\n")
+
 	return nil
+}
+
+// getWorktreeDisplayName extracts a short name from the worktree path for display.
+func getWorktreeDisplayName(path string) string {
+	// Get the last two components of the path (repo/worktree-name)
+	parts := strings.Split(filepath.ToSlash(path), "/")
+	if len(parts) >= 2 {
+		return parts[len(parts)-2] + "/" + parts[len(parts)-1]
+	}
+	return filepath.Base(path)
+}
+
+// getTildePath replaces the home directory with ~ for display.
+func getTildePath(path string) string {
+	home, err := os.UserHomeDir()
+	if err == nil && strings.HasPrefix(path, home) {
+		return "~" + path[len(home):]
+	}
+	return path
 }
