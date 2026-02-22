@@ -1,0 +1,422 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-tertiary: #1a1a25;
+  --bg-elevated: #222230;
+  
+  --color-cyan: #00fff9;
+  --color-magenta: #ff00ff;
+  --color-amber: #ffb800;
+  --color-green: #00ff88;
+  --color-red: #ff3366;
+  --color-blue: #00a8ff;
+  --color-purple: #b44aff;
+  
+  --text-primary: #e8e8f0;
+  --text-secondary: #a0a0b0;
+  --text-muted: #606070;
+  
+  --font-display: 'Orbitron', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'JetBrains Mono', monospace;
+  
+  --border-color: #2a2a3a;
+  --border-glow: rgba(0, 255, 249, 0.3);
+  
+  --sidebar-width: 280px;
+  --header-height: 70px;
+  
+  --glow-cyan: 0 0 10px rgba(0, 255, 249, 0.5), 0 0 20px rgba(0, 255, 249, 0.3), 0 0 40px rgba(0, 255, 249, 0.1);
+  --glow-magenta: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3);
+  --glow-amber: 0 0 10px rgba(255, 184, 0, 0.5), 0 0 20px rgba(255, 184, 0, 0.3);
+  
+  --transition-fast: 150ms ease;
+  --transition-medium: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(90deg, rgba(0, 255, 249, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(0, 255, 249, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+  animation: gridFlicker 4s ease-in-out infinite;
+}
+
+@keyframes gridFlicker {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.7; }
+  52% { opacity: 0.4; }
+  54% { opacity: 0.7; }
+}
+
+.scanlines::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
+}
+
+a {
+  color: var(--color-cyan);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  text-shadow: var(--glow-cyan);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 3rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 2rem;
+  letter-spacing: 0.03em;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+code {
+  font-family: var(--font-mono);
+  background: var(--bg-tertiary);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--color-amber);
+}
+
+pre {
+  font-family: var(--font-mono);
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  position: relative;
+}
+
+pre::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-cyan), var(--color-magenta));
+  border-radius: 8px 8px 0 0;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  color: var(--text-primary);
+}
+
+::selection {
+  background: var(--color-cyan);
+  color: var(--bg-primary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyan);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.neon-text {
+  color: var(--color-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.config-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.config-table th,
+.config-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border: 1px solid var(--border-color);
+}
+
+.config-table th {
+  background: var(--bg-tertiary);
+  color: var(--color-cyan);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.config-table td {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.neon-text-magenta {
+  color: var(--color-magenta);
+  text-shadow: var(--glow-magenta);
+}
+
+.neon-text-amber {
+  color: var(--color-amber);
+  text-shadow: var(--glow-amber);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 2px solid var(--color-cyan);
+  background: transparent;
+  color: var(--color-cyan);
+  cursor: pointer;
+  transition: var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--color-cyan);
+  transition: var(--transition-medium);
+  z-index: -1;
+}
+
+.btn:hover {
+  color: var(--bg-primary);
+}
+
+.btn:hover::before {
+  left: 0;
+}
+
+.btn-magenta {
+  border-color: var(--color-magenta);
+  color: var(--color-magenta);
+}
+
+.btn-magenta::before {
+  background: var(--color-magenta);
+}
+
+.btn-magenta:hover {
+  color: var(--bg-primary);
+}
+
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--color-cyan);
+  transform: scaleY(0);
+  transition: var(--transition-medium);
+}
+
+.card:hover {
+  border-color: var(--color-cyan);
+  transform: translateY(-4px);
+  box-shadow: var(--glow-cyan);
+}
+
+.card:hover::before {
+  transform: scaleY(1);
+}
+
+/* Code Block Copy Button */
+.code-block-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+}
+
+.code-block-wrapper pre {
+  margin: 0;
+}
+
+.copy-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: 10;
+  opacity: 0;
+}
+
+.code-block-wrapper:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button:hover {
+  background: var(--bg-elevated);
+  border-color: var(--color-cyan);
+  color: var(--color-cyan);
+  box-shadow: 0 0 10px rgba(0, 255, 249, 0.2);
+}
+
+.copy-button.copied {
+  border-color: var(--color-green);
+  color: var(--color-green);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+  opacity: 1;
+}
+
+.copy-icon,
+.check-icon {
+  flex-shrink: 0;
+}
+
+.copy-text {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+@keyframes copyPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.copy-button.copied .copy-text {
+  animation: copyPulse 0.5s ease;
+}

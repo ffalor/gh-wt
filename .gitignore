@@ -1,5 +1,8 @@
 /gh-wt
 /gh-wt.exe
 /dist
-.agents
 .opencode
+
+website/dist
+website/.astro
+website/node_modules

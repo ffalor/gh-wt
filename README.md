@@ -1,6 +1,6 @@
-# gh-wt
+# gh wt
 
-`gh-wt` is a GitHub CLI extension for creating and cleaning up Git worktrees from pull requests, issues, or your current HEAD. It enhances your development workflow by enabling customizable post-create actions to automatically set up your environment, like launching tmux, interacting with AI tools, or running project bootstrap commands.
+`gh wt` is a GitHub CLI extension for creating and cleaning up Git worktrees from pull requests, issues, or your current HEAD. It enhances your development workflow by enabling customizable post-create actions to automatically set up your environment, like launching tmux, interacting with AI tools, or running project bootstrap commands.
 
 ## Requirements
 
@@ -63,7 +63,7 @@ Use "gh wt [command] --help" for more information about a command.
 ## Configuration
 
 Config file path:
-- `~/.config/gh-worktree/config.yaml`
+- `~/.config/gh-wt/config.yaml`
 
 Environment variables:
 - Prefix: `GH_WT_`

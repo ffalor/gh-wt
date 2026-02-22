@@ -1,0 +1,89 @@
+---
+interface Props {
+  command: string;
+  description: string;
+  example?: string;
+}
+
+const { command, description, example } = Astro.props;
+---
+
+<div class="command-card">
+  <div class="command-header">
+    <code class="command-text">{command}</code>
+  </div>
+  <p class="command-description">{description}</p>
+  {example && (
+    <div class="command-example">
+      <span class="example-label">Example:</span>
+      <code>{example}</code>
+    </div>
+  )}
+</div>
+
+<style>
+  .command-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: var(--transition-medium);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .command-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--color-cyan);
+    transform: scaleY(0);
+    transition: var(--transition-medium);
+  }
+
+  .command-card:hover {
+    border-color: var(--color-cyan);
+    transform: translateX(4px);
+  }
+
+  .command-card:hover::before {
+    transform: scaleY(1);
+  }
+
+  .command-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .command-text {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--color-amber);
+    background: transparent;
+    padding: 0;
+  }
+
+  .command-description {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .command-example {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .example-label {
+    color: var(--text-muted);
+  }
+
+  .command-example code {
+    color: var(--color-green);
+    background: var(--bg-tertiary);
+  }
+</style>

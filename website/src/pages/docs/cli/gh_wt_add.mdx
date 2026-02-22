@@ -1,0 +1,52 @@
+---
+title: "gh wt add"
+layout: '../../../layouts/CLILayout.astro'
+slug: "gh_wt_add"
+description: "CLI reference for gh wt add"
+---
+
+## gh wt add
+
+Add a new worktree
+
+### Synopsis
+
+Add a new git worktree from either:
+  - A GitHub pull request URL or number
+  - A GitHub issue URL or number
+  - A name to use for the new worktree and branch
+
+
+```
+gh wt add [url|name] [flags]
+```
+
+### Examples
+
+```
+# Create worktree from PR URL
+gh wt add https://github.com/owner/repo/pull/123
+
+# Create worktree from Issue URL
+gh wt add https://github.com/owner/repo/issues/456
+
+# Create a worktree from a local branch
+gh wt add my-feature-branch
+```
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--issue` | issue number, issue URL, or git remote URL with issue ref |
+| `--pr` | PR number, PR URL, or git remote URL with PR ref |
+| `-a, --action` | action to run after worktree creation |
+
+### Options inherited from parent commands
+
+| Flag | Description |
+|------|-------------|
+| `--no-color` | disable color output |
+| `--verbose` | verbose output |
+| `-f, --force` | force operation without prompts |
+

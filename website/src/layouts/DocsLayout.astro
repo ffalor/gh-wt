@@ -1,0 +1,120 @@
+---
+import Sidebar from '../components/Sidebar.astro';
+import Scanlines from '../components/Scanlines.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'GitHub CLI extension for managing git worktrees' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} | gh-wt</title>
+  </head>
+  <body class="scanlines">
+    <Scanlines />
+    <div class="layout">
+      <Sidebar />
+      <main class="main-content">
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      // Add copy buttons to all pre > code blocks
+      document.querySelectorAll('pre code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        if (!pre) return;
+
+        // Skip if already has copy button
+        if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+
+        const code = codeBlock.textContent || '';
+
+        // Create wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-block-wrapper';
+
+        // Create copy button
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-button';
+        copyButton.setAttribute('aria-label', 'Copy code');
+        copyButton.innerHTML = `
+          <svg class="copy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <svg class="check-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span class="copy-text">Copy</span>
+        `;
+
+        copyButton.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(code);
+            
+            const copyIcon = copyButton.querySelector('.copy-icon') as SVGElement;
+            const checkIcon = copyButton.querySelector('.check-icon') as SVGElement;
+            const copyText = copyButton.querySelector('.copy-text') as HTMLElement;
+
+            if (copyIcon) copyIcon.style.display = 'none';
+            if (checkIcon) checkIcon.style.display = 'block';
+            if (copyText) copyText.textContent = 'Copied!';
+            
+            copyButton.classList.add('copied');
+            
+            setTimeout(() => {
+              if (copyIcon) copyIcon.style.display = 'block';
+              if (checkIcon) checkIcon.style.display = 'none';
+              if (copyText) copyText.textContent = 'Copy';
+              copyButton.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy:', err);
+          }
+        });
+
+        // Insert wrapper
+        if (pre.parentElement) {
+          pre.parentElement.insertBefore(wrapper, pre);
+          wrapper.appendChild(pre);
+          wrapper.appendChild(copyButton);
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .layout {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  .main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 3rem;
+    max-width: calc(100vw - var(--sidebar-width));
+  }
+
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 0;
+      padding: 1.5rem;
+      max-width: 100vw;
+    }
+  }
+</style>

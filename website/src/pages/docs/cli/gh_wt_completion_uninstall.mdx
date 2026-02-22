@@ -1,0 +1,39 @@
+---
+title: "gh wt completion uninstall"
+layout: '../../../layouts/CLILayout.astro'
+slug: "gh_wt_completion_uninstall"
+description: "CLI reference for gh wt completion uninstall"
+---
+
+## gh wt completion uninstall
+
+Uninstall shell completion for the detected shell
+
+### Synopsis
+
+Automatically uninstall shell completion for your current shell.
+
+This command detects your shell and removes the completion script from the
+appropriate location. After uninstallation, restart your shell or source
+your shell configuration file.
+
+
+```
+gh wt completion uninstall
+```
+
+### Examples
+
+```
+gh wt completion uninstall
+gh wt completion uninstall --verbose
+```
+
+### Options inherited from parent commands
+
+| Flag | Description |
+|------|-------------|
+| `--no-color` | disable color output |
+| `--verbose` | verbose output |
+| `-f, --force` | force operation without prompts |
+

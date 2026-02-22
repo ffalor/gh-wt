@@ -1,3 +1,10 @@
+---
+title: "gh wt completion install"
+layout: '../../../layouts/CLILayout.astro'
+slug: "gh_wt_completion_install"
+description: "CLI reference for gh wt completion install"
+---
+
 ## gh wt completion install
 
 Install shell completion for the detected shell
@@ -16,29 +23,23 @@ Supported shells:
   - Fish: Installs to ~/.config/fish/completions/
   - PowerShell: Provides instructions to add to profile
 
-Examples:
-  gh wt completion install
-	gh wt completion install --verbose
 
 ```
-gh wt completion install [flags]
+gh wt completion install
 ```
 
-### Options
+### Examples
 
 ```
-  -h, --help   help for install
+gh wt completion install
+gh wt completion install --verbose
 ```
 
 ### Options inherited from parent commands
 
-```
-  -f, --force      force operation without prompts
-      --no-color   disable color output
-      --verbose    verbose output
-```
-
-### SEE ALSO
-
-* [gh wt completion](gh_wt_completion.md)	 - Generate shell completion scripts for gh wt commands
+| Flag | Description |
+|------|-------------|
+| `--no-color` | disable color output |
+| `--verbose` | verbose output |
+| `-f, --force` | force operation without prompts |
 
