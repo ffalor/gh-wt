@@ -43,6 +43,9 @@ var addCmd = &cobra.Command{
 		# Create a worktree from a local branch
 		gh wt add my-feature-branch
 
+		# Create a worktree with a custom branch name
+		gh wt add my-feature-branch --branch my-custom-branch
+
 		# Create worktree from a specific branch
 		gh wt add my-feature-branch --start-point develop
 
@@ -61,6 +64,7 @@ var addCmd = &cobra.Command{
 func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
+	addCmd.Flags().StringVarP(&branchFlag, "branch", "b", "", "branch name to use for the new worktree")
 	addCmd.Flags().StringVarP(&nameFlag, "name", "n", "", "name to use for the worktree (overrides default for PR/Issue)")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
 	addCmd.Flags().StringVarP(&startPointFlag, "start-point", "s", "HEAD", "starting point for the new branch (e.g., branch, tag, commit); ignored for PRs")
@@ -120,6 +124,11 @@ func createFromPR(value string) error {
 		return err
 	}
 
+	branchName := prInfo.HeadRefName
+	if branchFlag != "" {
+		branchName = branchFlag
+	}
+
 	worktreeName := fmt.Sprintf("pr_%d", prInfo.Number)
 	if nameFlag != "" {
 		worktreeName = nameFlag
@@ -130,7 +139,7 @@ func createFromPR(value string) error {
 		Owner:        repo.Owner,
 		Repo:         repo.Name,
 		Number:       prInfo.Number,
-		BranchName:   prInfo.HeadRefName,
+		BranchName:   branchName,
 		WorktreeName: worktreeName,
 	}
 
@@ -170,6 +179,9 @@ func createFromIssue(value string) error {
 	}
 
 	branchName := fmt.Sprintf("issue_%d", issueInfo.Number)
+	if branchFlag != "" {
+		branchName = branchFlag
+	}
 	worktreeName := branchName
 	if nameFlag != "" {
 		worktreeName = nameFlag
@@ -203,6 +215,9 @@ func createFromLocal(name string) error {
 
 	// Sanitize the name for the branch
 	sanitizedBranchName := SanitizeBranchName(name)
+	if branchFlag != "" {
+		sanitizedBranchName = SanitizeBranchName(branchFlag)
+	}
 
 	worktreeName := name
 	if nameFlag != "" {
@@ -423,6 +438,7 @@ func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 var (
 	prFlag         string
 	issueFlag      string
+	branchFlag     string
 	actionFlag     string
 	startPointFlag string
 	nameFlag       string
