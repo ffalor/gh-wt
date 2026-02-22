@@ -44,10 +44,10 @@ var addCmd = &cobra.Command{
 		gh wt add my-feature-branch
 
 		# Create worktree from a specific branch
-		gh wt add my-feature-branch --start-point develop
+		gh wt add my-feature-branch --base develop
 
 		# Create worktree from a specific commit
-		gh wt add my-feature-branch --start-point abc123
+		gh wt add my-feature-branch --base abc123
 	`),
 	Aliases: []string{"create"},
 	Args:    cobra.RangeArgs(0, 1),
@@ -59,7 +59,7 @@ func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
-	addCmd.Flags().StringVar(&startPointFlag, "start-point", "", "starting point for the new branch (e.g., branch, tag, commit)")
+	addCmd.Flags().StringVarP(&baseFlag, "base", "b", "", "starting point for the new branch (e.g., branch, tag, commit)")
 	rootCmd.AddCommand(addCmd)
 }
 
@@ -134,10 +134,7 @@ func createFromPR(value string) error {
 		return fmt.Errorf("failed to fetch PR: %w", err)
 	}
 
-	startPoint := startPointFlag
-	if startPoint == "" {
-		startPoint = "FETCH_HEAD"
-	}
+	startPoint := "FETCH_HEAD"
 
 	return createWorktree(info, startPoint)
 }
@@ -177,7 +174,7 @@ func createFromIssue(value string) error {
 
 	Log.Outf(logger.Green, "Creating worktree for Issue #%d: %s\n", info.Number, issueInfo.Title)
 
-	startPoint := startPointFlag
+	startPoint := baseFlag
 	if startPoint == "" {
 		startPoint = "HEAD"
 	}
@@ -207,7 +204,7 @@ func createFromLocal(name string) error {
 		WorktreeName: name, // Worktree directory keeps the original name
 	}
 
-	startPoint := startPointFlag
+	startPoint := baseFlag
 	if startPoint == "" {
 		startPoint = "HEAD"
 	}
@@ -416,8 +413,8 @@ func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 }
 
 var (
-	prFlag         string
-	issueFlag      string
-	actionFlag     string
-	startPointFlag string
+	prFlag     string
+	issueFlag  string
+	actionFlag string
+	baseFlag   string
 )
