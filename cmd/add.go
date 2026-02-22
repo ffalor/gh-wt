@@ -42,6 +42,12 @@ var addCmd = &cobra.Command{
 
 		# Create a worktree from a local branch
 		gh wt add my-feature-branch
+
+		# Create worktree from a specific branch
+		gh wt add my-feature-branch --start-point develop
+
+		# Create worktree from a specific commit
+		gh wt add my-feature-branch --start-point abc123
 	`),
 	Aliases: []string{"create"},
 	Args:    cobra.RangeArgs(0, 1),
@@ -53,6 +59,7 @@ func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
+	addCmd.Flags().StringVar(&startPointFlag, "start-point", "", "starting point for the new branch (e.g., branch, tag, commit)")
 	rootCmd.AddCommand(addCmd)
 }
 
@@ -127,7 +134,12 @@ func createFromPR(value string) error {
 		return fmt.Errorf("failed to fetch PR: %w", err)
 	}
 
-	return createWorktree(info, "FETCH_HEAD")
+	startPoint := startPointFlag
+	if startPoint == "" {
+		startPoint = "FETCH_HEAD"
+	}
+
+	return createWorktree(info, startPoint)
 }
 
 // createFromIssue handles creation from an Issue URL or number.
@@ -164,7 +176,13 @@ func createFromIssue(value string) error {
 	}
 
 	Log.Outf(logger.Green, "Creating worktree for Issue #%d: %s\n", info.Number, issueInfo.Title)
-	return createWorktree(info, "HEAD") // Issues start from HEAD
+
+	startPoint := startPointFlag
+	if startPoint == "" {
+		startPoint = "HEAD"
+	}
+
+	return createWorktree(info, startPoint)
 }
 
 // createFromLocal handles creation from a local branch name.
@@ -189,7 +207,12 @@ func createFromLocal(name string) error {
 		WorktreeName: name, // Worktree directory keeps the original name
 	}
 
-	return createWorktree(info, "HEAD")
+	startPoint := startPointFlag
+	if startPoint == "" {
+		startPoint = "HEAD"
+	}
+
+	return createWorktree(info, startPoint)
 }
 
 func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
@@ -393,7 +416,8 @@ func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 }
 
 var (
-	prFlag     string
-	issueFlag  string
-	actionFlag string
+	prFlag         string
+	issueFlag      string
+	actionFlag     string
+	startPointFlag string
 )
