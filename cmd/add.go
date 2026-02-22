@@ -213,22 +213,26 @@ func createFromLocal(name string) error {
 		return err
 	}
 
-	// Sanitize the name for the branch
-	sanitizedBranchName := SanitizeBranchName(name)
+	// Branch name: --branch > --name > argument
+	branchName := name
 	if branchFlag != "" {
-		sanitizedBranchName = SanitizeBranchName(branchFlag)
+		branchName = branchFlag
+	} else if nameFlag != "" {
+		branchName = nameFlag
 	}
 
+	// Worktree name: --name > argument
 	worktreeName := name
 	if nameFlag != "" {
 		worktreeName = nameFlag
-		sanitizedBranchName = SanitizeBranchName(nameFlag)
 	}
+
+	branchName = SanitizeBranchName(branchName)
 
 	info := &worktree.WorktreeInfo{
 		Type:         worktree.Local,
 		Repo:         repoName,
-		BranchName:   sanitizedBranchName,
+		BranchName:   branchName,
 		WorktreeName: worktreeName,
 	}
 
