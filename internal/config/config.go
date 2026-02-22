@@ -34,6 +34,7 @@ var v *viper.Viper
 
 // Load initializes Viper and reads the configuration.
 // It returns the loaded Viper instance and handles file-not-found gracefully.
+// If no config file exists, it creates one with default values.
 func Load() (*viper.Viper, error) {
 	v = viper.New()
 
@@ -43,6 +44,7 @@ func Load() (*viper.Viper, error) {
 	}
 
 	configDir := filepath.Join(home, ".config", "gh-wt")
+	configFile := filepath.Join(configDir, "config.yaml")
 
 	v.AddConfigPath(configDir)
 
@@ -53,13 +55,26 @@ func Load() (*viper.Viper, error) {
 	v.SetEnvPrefix("GH_WT")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	// Sensible defaults
 	v.SetDefault("worktree_dir", filepath.Join(home, "github", "worktree"))
 
 	if err := v.ReadInConfig(); err != nil {
 		var notFound viper.ConfigFileNotFoundError
 		if !errors.As(err, &notFound) {
 			return nil, fmt.Errorf("failed to parse config file: %w", err)
+		}
+
+		if err := os.MkdirAll(configDir, 0o755); err != nil {
+			return nil, fmt.Errorf("cannot create config directory: %w", err)
+		}
+
+		if err := v.SafeWriteConfigAs(configFile); err != nil {
+			if os.IsNotExist(err) {
+				if err := v.WriteConfigAs(configFile); err != nil {
+					return nil, fmt.Errorf("failed to create config file: %w", err)
+				}
+			} else {
+				return nil, fmt.Errorf("failed to write config file: %w", err)
+			}
 		}
 	}
 
