@@ -15,10 +15,10 @@ Documentation website for `gh wt` GitHub CLI extension. Built with Astro and MDX
 
 ```bash
 cd website
-npm run dev      # Start development server
-npm run start   # Alias for dev
+npm run dev      # Never run this unless asked
+npm run start   # Never run this unless asked
 npm run build   # Build for production (includes docs generation)
-npm run preview # Preview production build locally
+npm run preview # Never run this unless asked
 ```
 
 ### Documentation Generation

@@ -9,11 +9,6 @@ import CommandCard from '../components/CommandCard.astro';
   <!-- Hero Section with Terminal Demo -->
   <section class="hero-glow">
     <div class="hero-container">
-      <div class="hero-badge fade-in-up">
-        <span class="badge-dot"></span>
-        GitHub CLI Extension
-      </div>
-      
       <h1 class="hero-title fade-in-up delay-1">
         <NeonText as="span" color="cyan" size="xl">gh-wt</NeonText>
         <br />
@@ -21,126 +16,113 @@ import CommandCard from '../components/CommandCard.astro';
       </h1>
       
       <p class="hero-description fade-in-up delay-2">
-        Create and manage git worktrees from GitHub PRs, Issues, and local branches.
-        Built for developers who live in the terminal.
+        Manage git worktrees from GitHub PRs, Issues, and local branches.
+        <br class="hide-mobile" />
+        Built for developers who work in the terminal.
       </p>
       
-      <div class="hero-actions fade-in-up delay-3">
-        <a href="/gh-wt/docs/installation" class="btn">
-          Get Started
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </a>
-        <a href="https://github.com/ffalor/gh-wt" class="btn btn-magenta" target="_blank" rel="noopener">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <div class="hero-install-row fade-in-up delay-3">
+        <div class="hero-install-command">
+          <code class="install-code">
+            <span class="prompt">$</span> gh extension install ffalor/gh-wt
+          </code>
+          <button class="hero-copy-btn" aria-label="Copy to clipboard" data-copy="gh extension install ffalor/gh-wt">
+            <span class="copy-text">COPY</span>
+            <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+        </div>
+        <a href="https://github.com/ffalor/gh-wt" class="github-link" target="_blank" rel="noopener" aria-label="View on GitHub">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
           </svg>
-          GitHub
         </a>
       </div>
     </div>
     
-    <div class="terminal-section fade-in-up delay-4">
+  </section>
+
+
+  <section class="see-it-in-action">
+    <h2 class="section-title">
+      <NeonText as="span" color="cyan">See It In Action</NeonText>
+    </h2>
+    
+    <div class="terminal-section">
       <TerminalHero />
+
     </div>
   </section>
-
-  <section class="features">
+  <section class="capabilities">
     <h2 class="section-title">
-      <NeonText as="span" color="magenta">Features</NeonText>
+      <NeonText as="span" color="magenta">Capabilities</NeonText>
     </h2>
     
-    <div class="features-grid">
-      <div class="feature-card fade-in-up delay-1">
-        <div class="feature-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="4"/>
-            <path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.92 7.94"/>
+    <div class="capabilities-grid">
+      <div class="capability-card fade-in-up delay-1">
+        <div class="capability-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
           </svg>
         </div>
-        <h3>PR & Issue Integration</h3>
-        <p>Create worktrees directly from GitHub pull requests and issues with a single command.</p>
+        <h3>Pull Requests</h3>
+        <p>Create a worktree from any PR URL with a single command.</p>
       </div>
       
-      <div class="feature-card fade-in-up delay-2">
-        <div class="feature-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 3v18M3 12h18"/>
-            <rect x="7" y="7" width="10" height="10" rx="1"/>
+      <div class="capability-card fade-in-up delay-2">
+        <div class="capability-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10" />
+            <text x="12" y="17" font-size="14" text-anchor="middle" fill="currentColor" stroke="none" font-family="monospace" font-weight="bold">?</text>
           </svg>
         </div>
-        <h3>Post-Creation Actions</h3>
-        <p>Run custom commands after worktree creation with powerful templating support.</p>
+        <h3>Issues</h3>
+        <p>Spin up a worktree from any issue URL to start working on a fix.</p>
       </div>
       
-      <div class="feature-card fade-in-up delay-3">
-        <div class="feature-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+      <div class="capability-card fade-in-up delay-3">
+        <div class="capability-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
           </svg>
         </div>
-        <h3>Local Branches</h3>
-        <p>Create worktrees from existing local branches or create new ones on the fly.</p>
+        <h3>Actions</h3>
+        <p>Reusable scripts with template variables like {"{{.BranchName}}"}. Run with -a on create or run.</p>
       </div>
       
-      <div class="feature-card fade-in-up delay-4">
-        <div class="feature-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      <div class="capability-card fade-in-up delay-4">
+        <div class="capability-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
           </svg>
         </div>
-        <h3>Colorized Output</h3>
-        <p>Beautiful terminal output with syntax highlighting and configurable colors.</p>
+        <h3>Run</h3>
+        <p>Execute actions or run any command in a worktree. Use -- for direct commands.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="quickstart">
-    <h2 class="section-title">
-      <NeonText as="span" color="amber">Quick Start</NeonText>
-    </h2>
-    
-    <div class="commands-grid">
-      <CommandCard 
-        command="gh wt add <pr-url>"
-        description="Create worktree from a GitHub PR"
-        example="gh wt add https://github.com/owner/repo/pull/123"
-      />
-      <CommandCard 
-        command="gh wt add <issue-url>"
-        description="Create worktree from a GitHub Issue"
-        example="gh wt add https://github.com/owner/repo/issues/456"
-      />
-      <CommandCard 
-        command="gh wt add <branch-name>"
-        description="Create worktree from a local branch"
-        example="gh wt add my-feature-branch"
-      />
-      <CommandCard 
-        command="gh wt rm <worktree-name>"
-        description="Remove a worktree and its branch"
-        example="gh wt rm pr_123"
-      />
-    </div>
-  </section>
-
-  <section class="cta">
-    <div class="cta-content">
-      <h2>Ready to level up your workflow?</h2>
-      <p>Install gh-wt and start managing worktrees like a pro.</p>
-      <a href="/gh-wt/docs/installation" class="btn">
-        Install Now
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </a>
     </div>
   </section>
 </DocsLayout>
 
+<script>
+  // Copy to clipboard functionality
+  document.querySelectorAll('.hero-copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = btn.getAttribute('data-copy');
+      await navigator.clipboard.writeText(text);
+      btn.classList.add('copied');
+      setTimeout(() => btn.classList.remove('copied'), 2000);
+    });
+  });
+</script>
+
 <style>
+  /* Hero Section - Keep original intact */
   .hero-glow {
     position: relative;
     padding: 4rem 0 6rem;
@@ -183,6 +165,8 @@ import CommandCard from '../components/CommandCard.astro';
     font-size: 0.8rem;
     color: var(--text-secondary);
     margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 
   .badge-dot {
@@ -213,6 +197,174 @@ import CommandCard from '../components/CommandCard.astro';
     line-height: 1.7;
   }
 
+  .hide-mobile {
+    display: inline;
+  }
+
+  /* Hero Install Row */
+  .hero-install-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .install-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .prompt-char {
+    color: var(--color-green);
+    font-weight: 600;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+  }
+
+  .hero-install-command {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 
+      0 0 0 1px var(--border-color),
+      0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: all var(--transition-fast);
+  }
+
+  .hero-install-command:hover {
+    border-color: var(--color-cyan);
+    box-shadow: 
+      0 0 0 1px var(--color-cyan),
+      0 0 20px rgba(0, 255, 249, 0.15),
+      0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .install-code {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: transparent;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0;
+    white-space: nowrap;
+  }
+
+  .install-code .prompt {
+    color: var(--color-green);
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+    margin-right: 0.5rem;
+  }
+
+  /* Hero Copy Button - Cyberpunk Style */
+  .hero-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    border: none;
+    border-left: 1px solid var(--border-color);
+    border-radius: 0;
+    padding: 0.6rem 0.75rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-copy-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 249, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .hero-copy-btn:hover {
+    color: var(--color-cyan);
+    background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-tertiary) 100%);
+  }
+
+  .hero-copy-btn:hover::before {
+    left: 100%;
+  }
+
+  .hero-copy-btn .copy-text {
+    display: none;
+  }
+
+  .hero-copy-btn .copy-icon {
+    opacity: 1;
+    transition: all var(--transition-fast);
+  }
+
+  .hero-copy-btn .check-icon {
+    display: none;
+    opacity: 1;
+  }
+
+  /* Copied State */
+  .hero-copy-btn.copied {
+    color: var(--color-green);
+    border-color: var(--color-green);
+    background: linear-gradient(180deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+  }
+
+  .hero-copy-btn.copied .copy-icon {
+    display: none;
+  }
+
+  .hero-copy-btn.copied .check-icon {
+    display: block;
+  }
+
+  /* Animation for copied state */
+  @keyframes copySuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .hero-copy-btn.copied {
+    animation: copySuccess 0.3s ease;
+  }
+
+  .github-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: var(--transition-fast);
+  }
+
+  .github-link:hover {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+  }
+
   .hero-actions {
     display: flex;
     gap: 1rem;
@@ -220,113 +372,160 @@ import CommandCard from '../components/CommandCard.astro';
     flex-wrap: wrap;
   }
 
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-cyan);
+    color: var(--bg-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: var(--transition-medium);
+    border: 2px solid var(--color-cyan);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0, 255, 249, 0.4);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--color-cyan);
+    color: var(--color-cyan);
+    box-shadow: none;
+  }
+
   .terminal-section {
     position: relative;
     z-index: 1;
   }
 
+  /* Section Styling */
   .section-title {
     font-family: var(--font-display);
     font-size: 1.75rem;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     text-align: center;
   }
 
-  .features {
+  /* See It In Action Section */
+  .see-it-in-action {
     padding: 6rem 0;
     border-top: 1px solid var(--border-color);
   }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+
+  /* Capabilities Section */
+  .capabilities {
+    padding: 6rem 0;
+    border-top: 1px solid var(--border-color);
   }
 
-  .feature-card {
+  .capabilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .capability-card {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 2rem;
+    padding: 1.75rem;
     transition: var(--transition-medium);
+    position: relative;
+    overflow: hidden;
   }
 
-  .feature-card:hover {
+  .capability-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, transparent 50%, rgba(0, 255, 249, 0.03) 50%);
+  }
+
+  .capability-card:hover {
     border-color: var(--color-cyan);
     transform: translateY(-4px);
     box-shadow: var(--glow-cyan);
   }
 
-  .feature-icon {
-    width: 48px;
-    height: 48px;
+  .capability-icon {
+    width: 52px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--bg-tertiary);
-    border-radius: 12px;
-    margin-bottom: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.25rem;
     color: var(--color-cyan);
   }
 
-  .feature-card h3 {
+  .capability-card h3 {
     font-family: var(--font-display);
     font-size: 1.1rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6rem;
     color: var(--text-primary);
   }
 
-  .feature-card p {
-    font-size: 0.9rem;
+  .capability-card p {
+    font-size: 0.875rem;
     color: var(--text-secondary);
     line-height: 1.6;
   }
 
-  .quickstart {
+  /* Usage Section */
+  .usage {
     padding: 6rem 0;
     border-top: 1px solid var(--border-color);
   }
 
   .commands-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .cta {
-    padding: 6rem 0;
-    border-top: 1px solid var(--border-color);
-    text-align: center;
-  }
-
-  .cta-content {
-    max-width: 600px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    max-width: 1000px;
     margin: 0 auto;
   }
 
-  .cta h2 {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .cta p {
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-  }
-
+  /* Responsive */
   @media (max-width: 640px) {
     .hero-subtitle {
       font-size: 1.75rem;
     }
 
-    .commands-grid {
+    .commands-grid,
+    .capabilities-grid {
       grid-template-columns: 1fr;
     }
 
     .hero-glow {
       padding: 2rem 0 4rem;
+    }
+
+    .hide-mobile {
+      display: none;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .capabilities-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>
