@@ -45,6 +45,15 @@ var addCmd = &cobra.Command{
 
 		# Create a worktree with a custom branch name
 		gh wt add my-feature-branch --branch my-custom-branch
+
+		# Create worktree from a specific branch
+		gh wt add my-feature-branch --start-point develop
+
+		# Create worktree from a specific commit
+		gh wt add my-feature-branch --start-point abc123
+
+		# Create worktree with custom name
+		gh wt add https://github.com/owner/repo/pull/123 --name my-custom-name
 	`),
 	Aliases: []string{"create"},
 	Args:    cobra.RangeArgs(0, 1),
@@ -56,7 +65,9 @@ func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
 	addCmd.Flags().StringVarP(&branchFlag, "branch", "b", "", "branch name to use for the new worktree")
+	addCmd.Flags().StringVarP(&nameFlag, "name", "n", "", "name to use for the worktree (overrides default for PR/Issue)")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
+	addCmd.Flags().StringVarP(&startPointFlag, "start-point", "s", "HEAD", "starting point for the new branch (e.g., branch, tag, commit); ignored for PRs")
 	rootCmd.AddCommand(addCmd)
 }
 
@@ -118,13 +129,18 @@ func createFromPR(value string) error {
 		branchName = branchFlag
 	}
 
+	worktreeName := fmt.Sprintf("pr_%d", prInfo.Number)
+	if nameFlag != "" {
+		worktreeName = nameFlag
+	}
+
 	info := &worktree.WorktreeInfo{
 		Type:         worktree.PR,
 		Owner:        repo.Owner,
 		Repo:         repo.Name,
 		Number:       prInfo.Number,
 		BranchName:   branchName,
-		WorktreeName: fmt.Sprintf("pr_%d", prInfo.Number),
+		WorktreeName: worktreeName,
 	}
 
 	Log.Outf(logger.Green, "Creating worktree for PR #%d: %s\n", info.Number, prInfo.Title)
@@ -166,17 +182,23 @@ func createFromIssue(value string) error {
 	if branchFlag != "" {
 		branchName = branchFlag
 	}
+	worktreeName := branchName
+	if nameFlag != "" {
+		worktreeName = nameFlag
+	}
+
 	info := &worktree.WorktreeInfo{
 		Type:         worktree.Issue,
 		Owner:        repo.Owner,
 		Repo:         repo.Name,
 		Number:       issueInfo.Number,
 		BranchName:   branchName,
-		WorktreeName: branchName,
+		WorktreeName: worktreeName,
 	}
 
 	Log.Outf(logger.Green, "Creating worktree for Issue #%d: %s\n", info.Number, issueInfo.Title)
-	return createWorktree(info, "HEAD") // Issues start from HEAD
+
+	return createWorktree(info, startPointFlag)
 }
 
 // createFromLocal handles creation from a local branch name.
@@ -197,14 +219,20 @@ func createFromLocal(name string) error {
 		sanitizedBranchName = SanitizeBranchName(branchFlag)
 	}
 
+	worktreeName := name
+	if nameFlag != "" {
+		worktreeName = nameFlag
+		sanitizedBranchName = SanitizeBranchName(nameFlag)
+	}
+
 	info := &worktree.WorktreeInfo{
 		Type:         worktree.Local,
 		Repo:         repoName,
 		BranchName:   sanitizedBranchName,
-		WorktreeName: name, // Worktree directory keeps the original name
+		WorktreeName: worktreeName,
 	}
 
-	return createWorktree(info, "HEAD")
+	return createWorktree(info, startPointFlag)
 }
 
 func createWorktree(info *worktree.WorktreeInfo, startPoint string) error {
@@ -408,8 +436,10 @@ func DetermineWorktreeType(input string) (worktree.WorktreeType, error) {
 }
 
 var (
-	prFlag     string
-	issueFlag  string
-	branchFlag string
-	actionFlag string
+	prFlag         string
+	issueFlag      string
+	branchFlag     string
+	actionFlag     string
+	startPointFlag string
+	nameFlag       string
 )
