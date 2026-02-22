@@ -36,7 +36,13 @@ function isActive(href: string): boolean {
 }
 ---
 
-<aside class="sidebar">
+<aside class="sidebar" data-sidebar>
+  <button class="sidebar-close" aria-label="Close menu" data-sidebar-close>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
   <div class="sidebar-header">
     <a href="/gh-wt/" class="logo">
       <span class="logo-text">&lt;gh-wt/&gt;</span>
@@ -172,6 +178,29 @@ function isActive(href: string): boolean {
     border-top: 1px solid var(--border-color);
   }
 
+  .sidebar-close {
+    display: none;
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .sidebar-close:hover {
+    border-color: var(--color-red);
+    color: var(--color-red);
+    box-shadow: 0 0 10px rgba(255, 51, 102, 0.2);
+  }
+
   .github-link {
     display: flex;
     align-items: center;
@@ -188,10 +217,15 @@ function isActive(href: string): boolean {
     .sidebar {
       transform: translateX(-100%);
       transition: var(--transition-medium);
+      width: 280px;
     }
 
     .sidebar.open {
       transform: translateX(0);
+    }
+
+    .sidebar-close {
+      display: flex;
     }
   }
 </style>

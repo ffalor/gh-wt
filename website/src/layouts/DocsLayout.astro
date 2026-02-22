@@ -1,6 +1,7 @@
 ---
 import Sidebar from '../components/Sidebar.astro';
 import Scanlines from '../components/Scanlines.astro';
+import MobileHeader from '../components/MobileHeader.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -22,14 +23,53 @@ const { title, description = 'GitHub CLI extension for managing git worktrees' }
   </head>
   <body class="scanlines">
     <Scanlines />
+    <MobileHeader />
     <div class="layout">
       <Sidebar />
+      <div class="backdrop" data-backdrop></div>
       <main class="main-content">
         <slot />
       </main>
     </div>
 
     <script>
+      const menuToggle = document.querySelector('[data-menu-toggle]');
+      const sidebar = document.querySelector('[data-sidebar]');
+      const backdrop = document.querySelector('[data-backdrop]');
+      const sidebarClose = document.querySelector('[data-sidebar-close]');
+
+      function openSidebar() {
+        sidebar?.classList.add('open');
+        backdrop?.classList.add('active');
+        menuToggle?.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSidebar() {
+        sidebar?.classList.remove('open');
+        backdrop?.classList.remove('active');
+        menuToggle?.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      menuToggle?.addEventListener('click', () => {
+        if (sidebar?.classList.contains('open')) {
+          closeSidebar();
+        } else {
+          openSidebar();
+        }
+      });
+
+      backdrop?.addEventListener('click', closeSidebar);
+
+      sidebarClose?.addEventListener('click', closeSidebar);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeSidebar();
+        }
+      });
+
       // Add copy buttons to all pre > code blocks
       document.querySelectorAll('pre code').forEach((codeBlock) => {
         const pre = codeBlock.parentElement;
@@ -103,6 +143,24 @@ const { title, description = 'GitHub CLI extension for managing git worktrees' }
     z-index: 1;
   }
 
+  .backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    transition: opacity var(--transition-medium);
+    pointer-events: none;
+  }
+
+  .backdrop.active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .main-content {
     flex: 1;
     margin-left: var(--sidebar-width);
@@ -114,7 +172,9 @@ const { title, description = 'GitHub CLI extension for managing git worktrees' }
     .main-content {
       margin-left: 0;
       padding: 1.5rem;
-      max-width: 100vw;
+      padding-top: calc(1.5rem + 60px);
+      max-width: 100%;
+      overflow-x: visible;
     }
   }
 </style>
