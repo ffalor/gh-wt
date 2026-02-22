@@ -76,7 +76,7 @@ func Save() error {
 	configFile := v.ConfigFileUsed()
 	if configFile == "" {
 		home, _ := os.UserHomeDir()
-		configDir := filepath.Join(home, ".config", "gh-worktree")
+		configDir := filepath.Join(home, ".config", "gh-wt")
 		configFile = filepath.Join(configDir, "config.yaml")
 
 		if err := os.MkdirAll(filepath.Dir(configFile), 0o755); err != nil {

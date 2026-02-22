@@ -1,0 +1,62 @@
+---
+title: "gh wt completion"
+layout: '../../../layouts/CLILayout.astro'
+slug: "gh_wt_completion"
+description: "CLI reference for gh wt completion"
+---
+
+## gh wt completion
+
+Generate shell completion scripts for gh wt commands
+
+### Synopsis
+
+Generate shell completion scripts to enable tab completion for gh wt commands.
+
+Tab completion provides:
+- Command name completion (add, remove, run, action)
+- Subcommand completion (install, uninstall)
+- Flag completion
+
+Supported shells: bash, zsh, fish, powershell
+
+
+```
+gh wt completion [shell]
+```
+
+### Examples
+
+```
+# Generate completion script for bash
+gh wt completion bash
+
+# Generate completion script for zsh
+gh wt completion zsh
+
+# Generate completion script for fish
+gh wt completion fish
+
+# Generate completion script for PowerShell
+gh wt completion powershell
+
+# Install completions automatically (detects your shell)
+gh wt completion install
+
+# Uninstall completions
+gh wt completion uninstall
+```
+
+### Options inherited from parent commands
+
+| Flag | Description |
+|------|-------------|
+| `--no-color` | disable color output |
+| `--verbose` | verbose output |
+| `-f, --force` | force operation without prompts |
+
+### SEE ALSO
+
+* [gh_wt_completion_install](/docs/cli/gh_wt_completion_install)	 - Install shell completion for the detected shell
+
+* [gh_wt_completion_uninstall](/docs/cli/gh_wt_completion_uninstall)	 - Uninstall shell completion for the detected shell

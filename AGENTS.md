@@ -1,6 +1,6 @@
 # AGENTS.md - Agentic Coding Guidelines
 
-`gh-wt` is a GitHub CLI extension for managing git worktrees from GitHub PRs, Issues, and local branches. Built with Go 1.25.6 using cobra, viper, and go-gh.
+`gh wt` is a GitHub CLI extension for managing git worktrees from GitHub PRs, Issues, and local branches. Built with Go 1.25.6 using cobra, viper, and go-gh.
 
 ## Build, Lint, and Test Commands
 
@@ -104,7 +104,7 @@ func init() {
 ### Configuration
 
 - Use Viper for configuration (`internal/config`)
-- Config file: `~/.config/gh-worktree/config.yaml`
+- Config file: `~/.config/gh-wt/config.yaml`
 - Support config file, environment variables (prefix: `GH_WT_`), and flags
 - Provide sensible defaults
 - Use `config.Get()` to retrieve typed configuration
@@ -165,21 +165,24 @@ Example: `feat(worktree): add support for GitHub issues`
 ## Commands
 
 ### Add (`gh wt add`)
+
 - Create worktree from PR URL/number: `gh wt https://github.com/owner/repo/pull/123`
 - Create worktree from Issue URL/number: `gh wt https://github.com/owner/repo/issues/456`
 - Create local worktree: `gh wt my-feature-branch`
 - Flags: `--pr`, `--issue`, `-a, --action`, `--use-existing`
 
 ### Remove (`gh wt rm`)
+
 - Remove worktree by name: `gh wt rm <worktree-name>`
 - Flags: `--force` to skip confirmation
 
 ### Root
+
 - Can also invoke add directly: `gh wt <url|name>`
 
 ## Configuration
 
-Example `~/.config/gh-worktree/config.yaml`:
+Example `~/.config/gh-wt/config.yaml`:
 
 ```yaml
 worktree_dir: "~/github/worktree"
@@ -192,6 +195,7 @@ actions:
 ```
 
 Action template variables:
+
 - `{{.WorktreePath}}` - Path to worktree
 - `{{.BranchName}}` - Branch name
 - `{{.Action}}` - Action name
@@ -207,3 +211,39 @@ Action template variables:
 - Worktrees stored in `~/github/worktree` by default (configurable)
 - Uses bare repositories for remote PR/Issue worktrees
 - Supports post-creation actions with templating
+
+## Website (Documentation)
+
+### Tech Stack
+
+- Hosting: GitHub Pages
+
+### Design Preferences
+
+#### Aesthetic Direction
+
+Retro-futuristic/cyberpunk terminal aesthetic - CRT monitors, neon glows, scanlines, typing animations.
+
+#### Color Palette
+
+| Role | Color | Hex |
+|------|-------|-----|
+| Background | Deep charcoal | #0a0a0f |
+| Primary accent | Electric cyan | #00fff9 |
+| Secondary accent | Hot magenta | #ff00ff |
+| Tertiary | Amber | #ffb800 |
+| Success | Bright green | #00ff88 |
+| Error | Coral red | #ff3366 |
+
+#### Visual Effects
+
+- CRT scanline overlay (subtle, CSS pseudo-element)
+- Neon glow on hover (box-shadow, text-shadow)
+- Typing cursor animations
+- Grid background with flicker effect
+- Staggered reveal animations on page load
+
+### Landing Page Elements
+
+- Animated terminal demos showing CLI usage
+- Install command prominently displayed

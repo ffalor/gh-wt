@@ -1,0 +1,332 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro';
+import TerminalHero from '../components/TerminalHero.astro';
+import NeonText from '../components/NeonText.astro';
+import CommandCard from '../components/CommandCard.astro';
+---
+
+<DocsLayout title="Home">
+  <!-- Hero Section with Terminal Demo -->
+  <section class="hero-glow">
+    <div class="hero-container">
+      <div class="hero-badge fade-in-up">
+        <span class="badge-dot"></span>
+        GitHub CLI Extension
+      </div>
+      
+      <h1 class="hero-title fade-in-up delay-1">
+        <NeonText as="span" color="cyan" size="xl">gh-wt</NeonText>
+        <br />
+        <span class="hero-subtitle">Worktree Manager</span>
+      </h1>
+      
+      <p class="hero-description fade-in-up delay-2">
+        Create and manage git worktrees from GitHub PRs, Issues, and local branches.
+        Built for developers who live in the terminal.
+      </p>
+      
+      <div class="hero-actions fade-in-up delay-3">
+        <a href="/gh-wt/docs/installation" class="btn">
+          Get Started
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+        <a href="https://github.com/ffalor/gh-wt" class="btn btn-magenta" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+    
+    <div class="terminal-section fade-in-up delay-4">
+      <TerminalHero />
+    </div>
+  </section>
+
+  <section class="features">
+    <h2 class="section-title">
+      <NeonText as="span" color="magenta">Features</NeonText>
+    </h2>
+    
+    <div class="features-grid">
+      <div class="feature-card fade-in-up delay-1">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.92 7.94"/>
+          </svg>
+        </div>
+        <h3>PR & Issue Integration</h3>
+        <p>Create worktrees directly from GitHub pull requests and issues with a single command.</p>
+      </div>
+      
+      <div class="feature-card fade-in-up delay-2">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3v18M3 12h18"/>
+            <rect x="7" y="7" width="10" height="10" rx="1"/>
+          </svg>
+        </div>
+        <h3>Post-Creation Actions</h3>
+        <p>Run custom commands after worktree creation with powerful templating support.</p>
+      </div>
+      
+      <div class="feature-card fade-in-up delay-3">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+          </svg>
+        </div>
+        <h3>Local Branches</h3>
+        <p>Create worktrees from existing local branches or create new ones on the fly.</p>
+      </div>
+      
+      <div class="feature-card fade-in-up delay-4">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        </div>
+        <h3>Colorized Output</h3>
+        <p>Beautiful terminal output with syntax highlighting and configurable colors.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="quickstart">
+    <h2 class="section-title">
+      <NeonText as="span" color="amber">Quick Start</NeonText>
+    </h2>
+    
+    <div class="commands-grid">
+      <CommandCard 
+        command="gh wt add <pr-url>"
+        description="Create worktree from a GitHub PR"
+        example="gh wt add https://github.com/owner/repo/pull/123"
+      />
+      <CommandCard 
+        command="gh wt add <issue-url>"
+        description="Create worktree from a GitHub Issue"
+        example="gh wt add https://github.com/owner/repo/issues/456"
+      />
+      <CommandCard 
+        command="gh wt add <branch-name>"
+        description="Create worktree from a local branch"
+        example="gh wt add my-feature-branch"
+      />
+      <CommandCard 
+        command="gh wt rm <worktree-name>"
+        description="Remove a worktree and its branch"
+        example="gh wt rm pr_123"
+      />
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="cta-content">
+      <h2>Ready to level up your workflow?</h2>
+      <p>Install gh-wt and start managing worktrees like a pro.</p>
+      <a href="/gh-wt/docs/installation" class="btn">
+        Install Now
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+</DocsLayout>
+
+<style>
+  .hero-glow {
+    position: relative;
+    padding: 4rem 0 6rem;
+    overflow: hidden;
+  }
+
+  .hero-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse, 
+      rgba(0, 255, 249, 0.08) 0%, 
+      rgba(255, 0, 255, 0.04) 40%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 4rem;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-green);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--color-green);
+  }
+
+  .hero-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .terminal-section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .features {
+    padding: 6rem 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: var(--transition-medium);
+  }
+
+  .feature-card:hover {
+    border-color: var(--color-cyan);
+    transform: translateY(-4px);
+    box-shadow: var(--glow-cyan);
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    color: var(--color-cyan);
+  }
+
+  .feature-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+
+  .feature-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .quickstart {
+    padding: 6rem 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .commands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .cta {
+    padding: 6rem 0;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta h2 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .cta p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 640px) {
+    .hero-subtitle {
+      font-size: 1.75rem;
+    }
+
+    .commands-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-glow {
+      padding: 2rem 0 4rem;
+    }
+  }
+</style>
