@@ -32,8 +32,6 @@ var addCmd = &cobra.Command{
 		  - A GitHub pull request URL or number
 		  - A GitHub issue URL or number
 		  - A name to use for the new worktree and branch
-
-		Use --branch or -b to specify a custom branch name.
 	`),
 	Example: heredoc.Doc(`
 		# Create worktree from PR URL
@@ -46,7 +44,6 @@ var addCmd = &cobra.Command{
 		gh wt add my-feature-branch
 
 		# Create a worktree with a custom branch name
-		gh wt add https://github.com/owner/repo/pull/123 --branch my-custom-branch
 		gh wt add my-feature-branch --branch my-custom-branch
 	`),
 	Aliases: []string{"create"},
