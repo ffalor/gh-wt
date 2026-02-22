@@ -47,6 +47,11 @@ title: Actions
       <td><code>~/github/worktree/pr_123</code></td>
     </tr>
     <tr>
+      <td><code>{{.WorktreeName}}</code></td>
+      <td>Name of the worktree directory</td>
+      <td><code>pr_123</code></td>
+    </tr>
+    <tr>
       <td><code>{{.BranchName}}</code></td>
       <td>Name of the branch</td>
       <td><code>pr_123</code></td>
