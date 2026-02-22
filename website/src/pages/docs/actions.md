@@ -82,11 +82,22 @@ title: Actions
 
   <section class="doc-section">
     <h2>Using Actions</h2>
+    <h3>Actions on Worktree Creation</h3>
     <p>Pass the <code>-a</code> or <code>--action</code> flag when creating a worktree:</p>
-<pre is:raw><code>gh wt add https://github.com/owner/repo/pull/123 -a tmux</code></pre>
-<p>You can also pass arguments to the action:</p>
-<pre is:raw><code>gh wt add my-branch -a editor -- --debug</code></pre>
-<p>The arguments after <code>--</code> will be available in <code>{{.CLI_ARGS}}</code>.</p>
+    <pre is:raw><code>gh wt add https://github.com/owner/repo/pull/123 -a tmux</code></pre>
+    <p>You can also pass arguments to the action:</p>
+    <pre is:raw><code>gh wt add my-branch -a editor -- --debug</code></pre>
+    <p>The arguments after <code>--</code> will be available in <code>{{.CLI_ARGS}}</code>.</p>
+    <h3>Using Actions After Creation</h3>
+    <p>Run actions on existing worktrees using the <code>run</code> command:</p>
+    <h4>Run a Named Action</h4>
+    <pre is:raw><code>gh wt run pr_123 tmux</code></pre>
+    <h4>Run with Arguments</h4>
+    <p>Pass arguments to the action using <code>--</code>:</p>
+    <pre is:raw><code>gh wt run pr_123 editor -- --debug</code></pre>
+    <h4>Run a Command</h4>
+    <p>Run any command directly in a worktree:</p>
+    <pre is:raw><code>gh wt run pr_123 -- ls -la</code></pre>
   </section>
 
   <section class="doc-section">
