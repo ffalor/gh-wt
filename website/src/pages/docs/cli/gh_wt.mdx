@@ -1,0 +1,56 @@
+---
+title: "gh wt"
+layout: '../../../layouts/CLILayout.astro'
+slug: "gh_wt"
+description: "CLI reference for gh wt"
+---
+
+## gh wt
+
+Create and manage git worktrees
+
+### Synopsis
+
+gh wt is a GitHub CLI extension that helps you create git worktrees.
+A GitHub pull request or issue URL can also be used.
+
+
+```
+gh wt wt
+```
+
+### Examples
+
+```
+# Create worktree from PR URL
+gh wt add https://github.com/owner/repo/pull/123 -a claude -- "/review"
+
+# Create worktree from Issue URL
+gh wt add https://github.com/owner/repo/issues/456 -a claude -- "implement issue #456"
+
+# Create a worktree
+gh wt add my-feature-branch
+
+# Remove a worktree
+gh wt rm pr_123
+```
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--no-color` | disable color output |
+| `--verbose` | verbose output |
+| `-f, --force` | force operation without prompts |
+
+### SEE ALSO
+
+* [gh_wt_action](/docs/cli/gh_wt_action)	 - Manage and list actions
+
+* [gh_wt_add](/docs/cli/gh_wt_add)	 - Add a new worktree
+
+* [gh_wt_completion](/docs/cli/gh_wt_completion)	 - Generate shell completion scripts for gh wt commands
+
+* [gh_wt_rm](/docs/cli/gh_wt_rm)	 - Remove a worktree and its associated branch
+
+* [gh_wt_run](/docs/cli/gh_wt_run)	 - Run an action or command in an existing worktree

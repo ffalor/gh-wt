@@ -1,0 +1,219 @@
+---
+interface Props {
+  commands?: string[];
+}
+
+const defaultCommands = [
+  { text: 'gh extension install .', delay: 0 },
+  { text: 'gh wt add https://github.com/owner/repo/pull/123', delay: 1500 },
+  { text: 'Creating worktree for pr_123...', delay: 3000, output: true },
+  { text: 'Branch: pr/123', delay: 3200, output: true },
+  { text: 'Worktree: ~/github/worktree/pr_123', delay: 3400, output: true },
+  { text: 'Worktree created successfully!', delay: 3600, success: true },
+];
+
+const { commands = defaultCommands } = Astro.props;
+---
+
+<div class="terminal">
+  <div class="terminal-header">
+    <div class="terminal-buttons">
+      <span class="terminal-btn close"></span>
+      <span class="terminal-btn minimize"></span>
+      <span class="terminal-btn maximize"></span>
+    </div>
+    <span class="terminal-title">bash — gh-wt</span>
+  </div>
+  <div class="terminal-body">
+    <div class="terminal-content" id="terminal-content">
+      <div class="terminal-line prompt">
+        <span class="prompt-symbol">$</span>
+        <span class="cursor"></span>
+      </div>
+    </div>
+  </div>
+  <div class="terminal-glow"></div>
+</div>
+
+<script define:vars={{ commands }}>
+  const terminalContent = document.getElementById('terminal-content');
+  let lineIndex = 0;
+  let charIndex = 0;
+  let currentLine = null;
+
+  async function typeLine(line, command) {
+    currentLine = document.createElement('div');
+    currentLine.className = 'terminal-line';
+    
+    if (command.output) {
+      currentLine.classList.add('output');
+    } else if (command.success) {
+      currentLine.classList.add('success');
+    } else if (!command.output && lineIndex > 0) {
+      currentLine.classList.add('prompt');
+      const promptSymbol = document.createElement('span');
+      promptSymbol.className = 'prompt-symbol';
+      promptSymbol.textContent = '$';
+      currentLine.appendChild(promptSymbol);
+    }
+    
+    terminalContent.appendChild(currentLine);
+    
+    for (let i = 0; i < command.text.length; i++) {
+      const span = document.createElement('span');
+      span.textContent = command.text[i];
+      currentLine.appendChild(span);
+      await new Promise(r => setTimeout(r, 30));
+    }
+    
+    if (!command.success && !command.output) {
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      currentLine.appendChild(cursor);
+    }
+    
+    await new Promise(r => setTimeout(r, 500));
+    lineIndex++;
+    
+    if (lineIndex < commands.length) {
+      typeLine(lineIndex, commands[lineIndex]);
+    }
+  }
+
+  setTimeout(() => {
+    typeLine(0, commands[0]);
+  }, 500);
+</script>
+
+<style>
+  .terminal {
+    position: relative;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .terminal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      var(--color-cyan) 0%, 
+      var(--color-magenta) 50%, 
+      var(--color-amber) 100%
+    );
+    animation: headerGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes headerGlow {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .terminal-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .terminal-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .terminal-btn.close {
+    background: var(--color-red);
+    box-shadow: 0 0 8px var(--color-red);
+  }
+
+  .terminal-btn.minimize {
+    background: var(--color-amber);
+    box-shadow: 0 0 8px var(--color-amber);
+  }
+
+  .terminal-btn.maximize {
+    background: var(--color-green);
+    box-shadow: 0 0 8px var(--color-green);
+  }
+
+  .terminal-title {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    flex: 1;
+    text-align: center;
+  }
+
+  .terminal-body {
+    padding: 1.5rem;
+    min-height: 200px;
+  }
+
+  .terminal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .terminal-line {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .terminal-line.prompt .prompt-symbol {
+    color: var(--color-cyan);
+    text-shadow: var(--glow-cyan);
+  }
+
+  .terminal-line.output {
+    color: var(--text-secondary);
+  }
+
+  .terminal-line.success {
+    color: var(--color-green);
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.2em;
+    background: var(--color-cyan);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .terminal-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 100px rgba(0, 255, 249, 0.03);
+  }
+</style>

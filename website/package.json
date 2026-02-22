@@ -1,0 +1,17 @@
+{
+  "name": "gh-wt-docs",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "npm run docs:generate && astro build",
+    "preview": "astro preview",
+    "docs:generate": "node scripts/generate-cli-docs.js",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.2.5",
+    "@astrojs/mdx": "^4.0.8"
+  }
+}

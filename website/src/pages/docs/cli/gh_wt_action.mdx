@@ -1,0 +1,45 @@
+---
+title: "gh wt action"
+layout: '../../../layouts/CLILayout.astro'
+slug: "gh_wt_action"
+description: "CLI reference for gh wt action"
+---
+
+## gh wt action
+
+Manage and list actions
+
+### Synopsis
+
+Manage and list actions configured in the gh-wt config file.
+
+
+```
+gh wt action [flags]
+```
+
+### Examples
+
+```
+# List all available actions
+gh wt action --list
+
+# List action names only (silent mode)
+gh wt action -s
+```
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `-l, --list` | list all available actions |
+| `-s, --silent` | suppress output when listing |
+
+### Options inherited from parent commands
+
+| Flag | Description |
+|------|-------------|
+| `--no-color` | disable color output |
+| `--verbose` | verbose output |
+| `-f, --force` | force operation without prompts |
+
