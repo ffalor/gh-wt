@@ -59,7 +59,7 @@ func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
-	addCmd.Flags().StringVarP(&startPointFlag, "start-point", "s", "", "starting point for the new branch (e.g., branch, tag, commit)")
+	addCmd.Flags().StringVarP(&startPointFlag, "start-point", "s", "HEAD", "starting point for the new branch (e.g., branch, tag, commit)")
 	rootCmd.AddCommand(addCmd)
 }
 
@@ -134,9 +134,7 @@ func createFromPR(value string) error {
 		return fmt.Errorf("failed to fetch PR: %w", err)
 	}
 
-	startPoint := "FETCH_HEAD"
-
-	return createWorktree(info, startPoint)
+	return createWorktree(info, "FETCH_HEAD")
 }
 
 // createFromIssue handles creation from an Issue URL or number.
@@ -174,10 +172,6 @@ func createFromIssue(value string) error {
 
 	Log.Outf(logger.Green, "Creating worktree for Issue #%d: %s\n", info.Number, issueInfo.Title)
 
-	if startPointFlag == "" {
-		startPointFlag = "HEAD"
-	}
-
 	return createWorktree(info, startPointFlag)
 }
 
@@ -201,10 +195,6 @@ func createFromLocal(name string) error {
 		Repo:         repoName,
 		BranchName:   sanitizedBranchName,
 		WorktreeName: name,
-	}
-
-	if startPointFlag == "" {
-		startPointFlag = "HEAD"
 	}
 
 	return createWorktree(info, startPointFlag)
