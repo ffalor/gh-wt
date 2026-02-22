@@ -59,7 +59,7 @@ func init() {
 	addCmd.Flags().StringVar(&prFlag, "pr", "", "PR number, PR URL, or git remote URL with PR ref")
 	addCmd.Flags().StringVar(&issueFlag, "issue", "", "issue number, issue URL, or git remote URL with issue ref")
 	addCmd.Flags().StringVarP(&actionFlag, "action", "a", "", "action to run after worktree creation")
-	addCmd.Flags().StringVarP(&startPointFlag, "start-point", "s", "HEAD", "starting point for the new branch (e.g., branch, tag, commit)")
+	addCmd.Flags().StringVarP(&startPointFlag, "start-point", "s", "HEAD", "starting point for the new branch (e.g., branch, tag, commit); ignored for PRs")
 	rootCmd.AddCommand(addCmd)
 }
 
