@@ -32,6 +32,18 @@ gh wt add https://github.com/owner/repo/issues/456
 
 # Create a worktree from a local branch
 gh wt add my-feature-branch
+
+# Create a worktree with a custom branch name
+gh wt add my-feature-branch --branch my-custom-branch
+
+# Create worktree from a specific branch
+gh wt add my-feature-branch --start-point develop
+
+# Create worktree from a specific commit
+gh wt add my-feature-branch --start-point abc123
+
+# Create worktree with custom name
+gh wt add https://github.com/owner/repo/pull/123 --name my-custom-name
 ```
 
 ### Options
@@ -41,6 +53,9 @@ gh wt add my-feature-branch
 | `--issue` | issue number, issue URL, or git remote URL with issue ref |
 | `--pr` | PR number, PR URL, or git remote URL with PR ref |
 | `-a, --action` | action to run after worktree creation |
+| `-b, --branch` | branch name to use for the new worktree |
+| `-n, --name` | name to use for the worktree (overrides default for PR/Issue) |
+| `-s, --start-point HEAD` | starting point for the new branch (e.g., branch, tag, commit); ignored for PRs |
 
 ### Options inherited from parent commands
 

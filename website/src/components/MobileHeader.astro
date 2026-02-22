@@ -1,0 +1,101 @@
+---
+const { title = 'gh-wt' } = Astro.props;
+---
+
+<header class="mobile-header">
+  <button class="hamburger" aria-label="Toggle menu" data-menu-toggle>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <a href="/gh-wt/" class="mobile-logo">
+    <span class="logo-text">&lt;gh-wt/&gt;</span>
+  </a>
+  <div class="mobile-spacer"></div>
+</header>
+
+<style>
+  .mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 1rem;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 200;
+  }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 10px;
+    transition: all var(--transition-fast);
+  }
+
+  .hamburger:hover {
+    border-color: var(--color-cyan);
+    background: rgba(0, 255, 249, 0.05);
+  }
+
+  .hamburger-line {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all var(--transition-medium);
+  }
+
+  .hamburger.active .hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+    background: var(--color-cyan);
+  }
+
+  .hamburger.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .hamburger.active .hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+    background: var(--color-cyan);
+  }
+
+  .mobile-logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-text {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-cyan);
+    text-shadow: var(--glow-cyan);
+    letter-spacing: 0.05em;
+  }
+
+  .mobile-spacer {
+    width: 44px;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-header {
+      display: flex;
+    }
+  }
+</style>

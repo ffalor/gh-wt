@@ -57,6 +57,12 @@ body {
   overflow-x: hidden;
 }
 
+@media (max-width: 768px) {
+  body {
+    overflow-x: visible;
+  }
+}
+
 body::before {
   content: '';
   position: fixed;
@@ -114,6 +120,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 h1 {
@@ -206,6 +214,15 @@ pre code {
   border-collapse: collapse;
   margin: 1.5rem 0;
   font-size: 0.9rem;
+  overflow-x: auto;
+  display: block;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+
+.config-table thead,
+.config-table tbody {
+  min-width: 600px;
 }
 
 .config-table th,
