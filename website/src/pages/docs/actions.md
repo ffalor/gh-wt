@@ -17,16 +17,39 @@ title: Actions
   <section class="doc-section">
     <h2>Configuration</h2>
     <p>Define actions in your configuration file:</p>
-    
-<pre is:raw><code>actions:
-  - name: tmux
-    cmds:
-      - tmux new-session -d -s {{.BranchName}}
-      - tmux send-keys -t {{.BranchName}} "cd {{.WorktreePath}}" C-m
 
-  - name: editor
-    cmds:
-      - code {{.WorktreePath}}</code></pre>
+    <h3>Action Schema</h3>
+    <p>Each action supports the following fields:</p>
+<table class="config-table" is:raw>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>name</code></td>
+      <td>string</td>
+      <td>Yes</td>
+      <td>Unique name for the action</td>
+    </tr>
+    <tr>
+      <td><code>dir</code></td>
+      <td>string</td>
+      <td>No</td>
+      <td>Working directory to run commands in. Supports template variables. Defaults to the worktree path.</td>
+    </tr>
+    <tr>
+      <td><code>cmds</code></td>
+      <td>[]string</td>
+      <td>Yes</td>
+      <td>List of commands to execute</td>
+    </tr>
+  </tbody>
+</table></pre>
   </section>
 
   <section class="doc-section">
@@ -111,21 +134,24 @@ title: Actions
     <p>Opens the worktree directory in Visual Studio Code.</p>
 <pre is:raw><code>actions:
   - name: code
+    dir: {{.WorktreePath}}
     cmds:
-      - code {{.WorktreePath}}</code></pre>
+      - code .</code></pre>
     <h3>tmux with Vim</h3>
     <p>Creates a new tmux session named after the branch and opens Vim in the worktree directory.</p>
 <pre is:raw><code>actions:
   - name: tmux-vim
+    dir: {{.WorktreePath}}
     cmds:
       - tmux new-session -d -s {{.BranchName}}
-      - tmux send-keys -t {{.BranchName}} "cd {{.WorktreePath}} && vim ." C-m</code></pre>
+      - tmux send-keys -t {{.BranchName}} "vim ." C-m</code></pre>
     <h3>Shell in Worktree</h3>
     <p>Opens a new shell (using your default shell) in the worktree directory.</p>
 <pre is:raw><code>actions:
   - name: shell
+    dir: {{.WorktreePath}}
     cmds:
-      - cd {{.WorktreePath}} && $SHELL</code></pre>
+      - $SHELL</code></pre>
   </section>
 
   <nav class="doc-nav">
