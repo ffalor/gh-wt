@@ -143,6 +143,23 @@ CLI command pages are auto-generated. To add a new command:
 1. Add the command in `cmd/` package
 2. Run `task website:docs:generate` to regenerate docs
 
+### HTML in Markdown
+
+When mixing HTML with markdown in `.md` files, avoid blank lines before HTML elements. A blank line before an HTML tag (like `<h3>` or `<table>`) can cause the markdown parser to treat subsequent content as a code block.
+
+**Bad:**
+```markdown
+<p>Some text</p>
+
+<h3>Heading</h3>
+```
+
+**Good:**
+```markdown
+<p>Some text</p>
+<h3>Heading</h3>
+```
+
 ## CSS Guidelines
 
 - Use CSS custom properties (variables) for colors defined in the palette

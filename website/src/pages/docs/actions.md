@@ -16,8 +16,6 @@ title: Actions
 
   <section class="doc-section">
     <h2>Configuration</h2>
-    <p>Define actions in your configuration file:</p>
-
     <h3>Action Schema</h3>
     <p>Each action supports the following fields:</p>
 <table class="config-table" is:raw>
@@ -49,13 +47,10 @@ title: Actions
       <td>List of commands to execute</td>
     </tr>
   </tbody>
-</table></pre>
-  </section>
-
-  <section class="doc-section">
-    <h2>Template Variables</h2>
+</table>
+    <h3>Template Variables</h3>
     <p>Actions support the following template variables:</p>
-<table class="config-table" is:raw>
+    <table class="config-table" is:raw>
   <thead>
     <tr>
       <th>Variable</th>

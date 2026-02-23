@@ -67,9 +67,16 @@ tasks:
 
   # Website Development Tasks
 
+  npm-install:
+    desc: Install npm dependencies
+    dir: website
+    cmds:
+      - npm install
+
   website:dev:
     desc: Run the website development server
     dir: website
+    deps: [npm-install]
     cmds:
       - npm run dev
     interactive: true
@@ -77,12 +84,14 @@ tasks:
   website:build:
     desc: Build the website for production
     dir: website
+    deps: [npm-install]
     cmds:
       - npm run build
 
   website:preview:
     desc: Preview the built website locally
     dir: website
+    deps: [npm-install]
     cmds:
       - npm run preview
     interactive: true
