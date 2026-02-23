@@ -11,7 +11,7 @@ title: Configuration
 
   <section class="doc-section">
     <h2>Configuration File</h2>
-    <p>gh-wt reads configuration from <code>~/.config/gh-worktree/config.yaml</code>.</p>
+    <p>gh-wt reads configuration from <code>~/.config/gh-wt/config.yaml</code>.</p>
 
 <pre is:raw><code>worktree_dir: "~/github/worktree"
 
