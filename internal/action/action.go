@@ -94,7 +94,14 @@ func Execute(ctx context.Context, opts *ExecuteOptions) error {
 	}
 
 	if action == nil {
-		return fmt.Errorf("action '%s' not found in config", opts.ActionName)
+		var actionNames []string
+		for _, a := range cfg.Actions {
+			actionNames = append(actionNames, a.Name)
+		}
+		if len(actionNames) == 0 {
+			return fmt.Errorf("unknown action %q (no actions configured)", opts.ActionName)
+		}
+		return fmt.Errorf("unknown action %q\n\nAvailable actions:\n  %s", opts.ActionName, strings.Join(actionNames, "\n  "))
 	}
 
 	// Get git root directory
