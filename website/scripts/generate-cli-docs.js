@@ -44,6 +44,8 @@ files.filter(f => f.endsWith('.mdx')).forEach(f => {
   // Fix SEE ALSO links - modify markdown links to include full path
   // [text](gh_wt.md) -> [text](/gh-wt/docs/cli/gh_wt)
   content = content.replace(/\]\(([^)]+)\.md\)/g, `](/gh-wt/docs/cli/$1)`);
+  // Fix SEE ALSO links that use absolute /docs/cli/ paths (from docgen)
+  content = content.replace(/\]\(\/docs\/cli\/([^)]+)\)/g, `](/gh-wt/docs/cli/$1)`);
   writeFileSync(filepath, content);
 });
 
