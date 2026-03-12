@@ -41,6 +41,7 @@ Usage:
 Worktrees
   action      Manage and list actions
   add         Add a new worktree
+  list        List managed worktrees
   rm          Remove a worktree and its associated branch
   run         Run an action or command in an existing worktree
 

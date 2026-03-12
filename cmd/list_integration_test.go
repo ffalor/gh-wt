@@ -155,6 +155,97 @@ func TestListWithWorktreesIntegration(t *testing.T) {
 	_ = gitWtRm2.Run()
 }
 
+func TestListAllIntegration(t *testing.T) {
+	setup := setupIntegrationTest(t)
+
+	tmpDir := t.TempDir()
+	worktreeBase := filepath.Join(tmpDir, "worktrees")
+
+	// Create two separate git repos and worktrees under the same base
+	for _, repoName := range []string{"repo-a", "repo-b"} {
+		repoDir := filepath.Join(tmpDir, repoName)
+		require.NoError(t, os.MkdirAll(repoDir, 0o755))
+
+		gitInit := exec.Command("git", "init")
+		gitInit.Dir = repoDir
+		require.NoError(t, gitInit.Run(), "git init failed for %s", repoName)
+
+		gitCfg1 := exec.Command("git", "config", "user.email", "test@example.com")
+		gitCfg1.Dir = repoDir
+		require.NoError(t, gitCfg1.Run())
+
+		gitCfg2 := exec.Command("git", "config", "user.name", "Test User")
+		gitCfg2.Dir = repoDir
+		require.NoError(t, gitCfg2.Run())
+
+		testFile := filepath.Join(repoDir, "test.txt")
+		require.NoError(t, os.WriteFile(testFile, []byte("test"), 0o644))
+
+		gitAdd := exec.Command("git", "add", "test.txt")
+		gitAdd.Dir = repoDir
+		require.NoError(t, gitAdd.Run())
+
+		gitCommit := exec.Command("git", "commit", "-m", "initial commit")
+		gitCommit.Dir = repoDir
+		require.NoError(t, gitCommit.Run())
+
+		// Create a worktree for each repo
+		wtPath := filepath.Join(worktreeBase, repoName, "feature-1")
+		gitWt := exec.Command("git", "worktree", "add", "-b", "feature-1", wtPath)
+		gitWt.Dir = repoDir
+		require.NoError(t, gitWt.Run(), "failed to create worktree for %s", repoName)
+	}
+
+	t.Run("list --all shows worktrees grouped by repo", func(t *testing.T) {
+		cmd := exec.Command(setup.binaryPath, "list", "--all", "--no-color")
+		cmd.Env = append(os.Environ(), "GH_WT_WORKTREE_DIR="+worktreeBase)
+		output, err := cmd.CombinedOutput()
+		outputStr := string(output)
+
+		require.NoError(t, err, "list --all should succeed: %s", outputStr)
+
+		// Should contain both repo names as group headers
+		assert.Contains(t, outputStr, "repo-a")
+		assert.Contains(t, outputStr, "repo-b")
+
+		// Should contain worktree names
+		assert.Contains(t, outputStr, "feature-1")
+
+		// Should contain indented headers
+		assert.Contains(t, outputStr, "  NAME")
+		assert.Contains(t, outputStr, "BRANCH")
+
+		// Verify repo-a appears before repo-b (filesystem order)
+		idxA := strings.Index(outputStr, "repo-a")
+		idxB := strings.Index(outputStr, "repo-b")
+		assert.Greater(t, idxB, idxA, "repo-a should appear before repo-b")
+	})
+
+	t.Run("list --all with -a shorthand", func(t *testing.T) {
+		cmd := exec.Command(setup.binaryPath, "list", "-a", "--no-color")
+		cmd.Env = append(os.Environ(), "GH_WT_WORKTREE_DIR="+worktreeBase)
+		output, err := cmd.CombinedOutput()
+		outputStr := string(output)
+
+		require.NoError(t, err, "list -a should succeed: %s", outputStr)
+		assert.Contains(t, outputStr, "repo-a")
+		assert.Contains(t, outputStr, "repo-b")
+	})
+
+	t.Run("list --all with no worktrees shows warning", func(t *testing.T) {
+		emptyBase := filepath.Join(tmpDir, "empty-base")
+		require.NoError(t, os.MkdirAll(emptyBase, 0o755))
+
+		cmd := exec.Command(setup.binaryPath, "list", "--all")
+		cmd.Env = append(os.Environ(), "GH_WT_WORKTREE_DIR="+emptyBase)
+		output, err := cmd.CombinedOutput()
+		outputStr := string(output)
+
+		require.NoError(t, err, "list --all with empty base should succeed: %s", outputStr)
+		assert.Contains(t, outputStr, "No worktrees found")
+	})
+}
+
 func TestListVisibilityIntegration(t *testing.T) {
 	setup := setupIntegrationTest(t)
 

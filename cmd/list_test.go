@@ -32,6 +32,21 @@ func TestListCmd_Structure(t *testing.T) {
 	}
 }
 
+func TestListCmd_AllFlag(t *testing.T) {
+	flag := listCmd.Flags().Lookup("all")
+	if flag == nil {
+		t.Fatal("expected --all flag to be defined")
+	}
+
+	if flag.Shorthand != "a" {
+		t.Errorf("expected shorthand 'a', got %q", flag.Shorthand)
+	}
+
+	if flag.DefValue != "false" {
+		t.Errorf("expected default value 'false', got %q", flag.DefValue)
+	}
+}
+
 func TestFilterWorktreesByBase(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -101,6 +116,94 @@ func TestGetWorktreeDisplayName(t *testing.T) {
 			result := getWorktreeDisplayName(tt.path)
 			if result != tt.expected {
 				t.Errorf("expected %q, got %q", tt.expected, result)
+			}
+		})
+	}
+}
+
+func TestGroupWorktreesByRepo(t *testing.T) {
+	tests := []struct {
+		name      string
+		worktrees []git.WorktreeInfo
+		baseDir   string
+		expected  []repoGroup
+	}{
+		{
+			name: "groups by repo",
+			worktrees: []git.WorktreeInfo{
+				{Path: "/base/repo-a/feature-1", Branch: "feature-1"},
+				{Path: "/base/repo-a/bugfix-2", Branch: "bugfix-2"},
+				{Path: "/base/repo-b/testing123", Branch: "testing123"},
+			},
+			baseDir: "/base",
+			expected: []repoGroup{
+				{
+					repo: "repo-a",
+					worktrees: []git.WorktreeInfo{
+						{Path: "/base/repo-a/feature-1", Branch: "feature-1"},
+						{Path: "/base/repo-a/bugfix-2", Branch: "bugfix-2"},
+					},
+				},
+				{
+					repo: "repo-b",
+					worktrees: []git.WorktreeInfo{
+						{Path: "/base/repo-b/testing123", Branch: "testing123"},
+					},
+				},
+			},
+		},
+		{
+			name:      "empty input",
+			worktrees: nil,
+			baseDir:   "/base",
+			expected:  nil,
+		},
+		{
+			name: "single repo",
+			worktrees: []git.WorktreeInfo{
+				{Path: "/base/my-repo/wt-1", Branch: "wt-1"},
+				{Path: "/base/my-repo/wt-2", Branch: "wt-2"},
+			},
+			baseDir: "/base",
+			expected: []repoGroup{
+				{
+					repo: "my-repo",
+					worktrees: []git.WorktreeInfo{
+						{Path: "/base/my-repo/wt-1", Branch: "wt-1"},
+						{Path: "/base/my-repo/wt-2", Branch: "wt-2"},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := groupWorktreesByRepo(tt.worktrees, tt.baseDir)
+
+			if len(result) != len(tt.expected) {
+				t.Fatalf("expected %d groups, got %d", len(tt.expected), len(result))
+			}
+
+			for i, group := range result {
+				if group.repo != tt.expected[i].repo {
+					t.Errorf("group %d: expected repo %q, got %q", i, tt.expected[i].repo, group.repo)
+				}
+				if len(group.worktrees) != len(tt.expected[i].worktrees) {
+					t.Errorf("group %d: expected %d worktrees, got %d",
+						i, len(tt.expected[i].worktrees), len(group.worktrees))
+					continue
+				}
+				for j, wt := range group.worktrees {
+					if wt.Path != tt.expected[i].worktrees[j].Path {
+						t.Errorf("group %d, wt %d: expected path %q, got %q",
+							i, j, tt.expected[i].worktrees[j].Path, wt.Path)
+					}
+					if wt.Branch != tt.expected[i].worktrees[j].Branch {
+						t.Errorf("group %d, wt %d: expected branch %q, got %q",
+							i, j, tt.expected[i].worktrees[j].Branch, wt.Branch)
+					}
+				}
 			}
 		})
 	}
