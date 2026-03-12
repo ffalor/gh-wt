@@ -1,0 +1,48 @@
+---
+title: "gh wt list"
+layout: '../../../layouts/CLILayout.astro'
+slug: "gh_wt_list"
+description: "CLI reference for gh wt list"
+---
+
+## gh wt list
+
+List managed worktrees
+
+### Synopsis
+
+List all worktrees managed by gh-wt (those under the configured worktree directory).
+Displays the worktree name and associated branch.
+
+
+```
+gh wt list [flags]
+```
+
+### Examples
+
+```
+# List all worktrees
+gh wt list
+
+# List worktrees across all repos
+gh wt list --all
+
+# Using the alias
+gh wt ls
+```
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `-a, --all` | list worktrees for all repos |
+
+### Options inherited from parent commands
+
+| Flag | Description |
+|------|-------------|
+| `--no-color` | disable color output |
+| `--verbose` | verbose output |
+| `-f, --force` | force operation without prompts |
+

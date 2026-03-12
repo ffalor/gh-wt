@@ -115,6 +115,42 @@ func GetWorktreeInfo() ([]WorktreeInfo, error) {
 	return worktrees, nil
 }
 
+// ListAllWorktrees scans the worktree base directory for all worktrees across
+// all repos. It expects the structure: baseDir/<repo>/<worktree-name>.
+func ListAllWorktrees(baseDir string) ([]WorktreeInfo, error) {
+	repos, err := os.ReadDir(baseDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read worktree base directory: %w", err)
+	}
+
+	var worktrees []WorktreeInfo
+	for _, repo := range repos {
+		if !repo.IsDir() || strings.HasPrefix(repo.Name(), ".") {
+			continue
+		}
+		repoPath := filepath.Join(baseDir, repo.Name())
+		entries, err := os.ReadDir(repoPath)
+		if err != nil {
+			continue
+		}
+		for _, entry := range entries {
+			if !entry.IsDir() || strings.HasPrefix(entry.Name(), ".") {
+				continue
+			}
+			wtPath := filepath.Join(repoPath, entry.Name())
+			branch, err := CommandOutputAt(wtPath, "branch", "--show-current")
+			if err != nil {
+				continue
+			}
+			worktrees = append(worktrees, WorktreeInfo{
+				Path:   wtPath,
+				Branch: strings.TrimSpace(branch),
+			})
+		}
+	}
+	return worktrees, nil
+}
+
 // WorktreeIsRegistered checks if a worktree path is registered in git.
 func WorktreeIsRegistered(worktreePath string) bool {
 	worktrees, err := GetWorktreeInfo()
