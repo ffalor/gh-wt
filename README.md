@@ -1,3 +1,8 @@
+> [!WARNING]
+> **This repository is archived.** 
+> Claude Code added worktree tools pretty much right after creating this, feel free to fork and make your own. This repo is no longer monitored, and pull requests or issues will not be reviewed.
+
+
 # gh wt
 
 `gh wt` is a GitHub CLI extension for creating and cleaning up Git worktrees from pull requests, issues, or your current HEAD. It enhances your development workflow by enabling customizable post-create actions to automatically set up your environment, like launching tmux, interacting with AI tools, or running project bootstrap commands.
